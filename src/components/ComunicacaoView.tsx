@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ActiveView } from '../types';
-import { MessageSquare, Send, Mail, CheckCircle2, MessageCircle, Users, BellRing, Smartphone, FileText } from 'lucide-react';
+import { MessageSquare, Send, Mail, CheckCircle2, MessageCircle, Users, BellRing, Smartphone, FileText, History, Edit3, Sliders } from 'lucide-react';
 
 interface ComunicacaoViewProps {
   onSelectView: (view: ActiveView) => void;
@@ -248,7 +248,7 @@ export const ComunicacaoView: React.FC<ComunicacaoViewProps> = ({ onShowToast })
               : 'text-on-surface-variant hover:bg-surface-container hover:text-primary'
           }`}
         >
-          <span className="material-symbols-outlined text-[16px]">history</span>
+          <History className="w-4 h-4" />
           Histórico de Envio
         </button>
 
@@ -260,7 +260,7 @@ export const ComunicacaoView: React.FC<ComunicacaoViewProps> = ({ onShowToast })
               : 'text-on-surface-variant hover:bg-surface-container hover:text-primary'
           }`}
         >
-          <span className="material-symbols-outlined text-[16px]">edit_note</span>
+          <Edit3 className="w-4 h-4" />
           Nova Mensagem
         </button>
 
@@ -272,7 +272,7 @@ export const ComunicacaoView: React.FC<ComunicacaoViewProps> = ({ onShowToast })
               : 'text-on-surface-variant hover:bg-surface-container hover:text-primary'
           }`}
         >
-          <span className="material-symbols-outlined text-[16px]">template_configuration</span>
+          <FileText className="w-4 h-4" />
           Modelos (Templates)
         </button>
 
@@ -284,7 +284,7 @@ export const ComunicacaoView: React.FC<ComunicacaoViewProps> = ({ onShowToast })
               : 'text-on-surface-variant hover:bg-surface-container hover:text-primary'
           }`}
         >
-          <span className="material-symbols-outlined text-[16px]">settings_input_component</span>
+          <Sliders className="w-4 h-4" />
           Canais & Integrações
         </button>
       </div>
