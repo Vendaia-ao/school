@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { CreditCard, Award, GraduationCap, FileText } from 'lucide-react';
 import { Student, StudentFilters } from '../types';
 
 interface StudentsViewProps {
@@ -191,44 +192,35 @@ export const StudentsView: React.FC<StudentsViewProps> = ({
         </div>
 
         {/* Card 4: Emissões Pendentes */}
-        <div className="bg-surface-white border border-outline-variant/30 rounded-lg px-3 py-2 shadow-sm flex flex-col justify-between transition-all hover:shadow-md h-[68px]">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider">Pendentes</span>
+        <div className="bg-surface-white border border-outline-variant/30 rounded-lg px-4 py-2.5 shadow-sm flex items-center justify-between transition-all hover:shadow-md h-[68px]">
+          <div className="flex flex-col justify-center">
+            <span className="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider mb-0.5">
+              Emissões Pendentes
+            </span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-xl font-bold text-error leading-none">42</span>
+              <span className="text-[10px] text-outline font-medium">por emitir</span>
+            </div>
+          </div>
+          <div className="flex flex-col items-end gap-1.5">
             <button
               onClick={() => onShowToast('Notificações de emissão pendente enviadas para todos os alunos.')}
-              className="text-secondary text-[9px] font-bold hover:underline uppercase tracking-tight"
+              className="px-2 py-0.5 rounded bg-error/10 text-error hover:bg-error/20 text-[10px] font-bold transition-all cursor-pointer flex items-center gap-1"
             >
-              Emitir Tudo
+              <FileText className="w-3 h-3" /> Emitir Tudo
             </button>
-          </div>
-          <div className="grid grid-cols-2 gap-x-2 gap-y-1">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[12px] text-error">credit_card</span>
-                <span className="text-[10px] font-bold text-on-surface">14</span>
-              </div>
-              <span className="text-[8px] text-error font-bold">↑5%</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[12px] text-amber-500">verified</span>
-                <span className="text-[10px] font-bold text-on-surface">5</span>
-              </div>
-              <span className="text-[8px] text-success font-bold">↓12%</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[12px] text-amber-500">school</span>
-                <span className="text-[10px] font-bold text-on-surface">8</span>
-              </div>
-              <span className="text-[8px] text-success font-bold">↓3%</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[12px] text-error">description</span>
-                <span className="text-[10px] font-bold text-on-surface">15</span>
-              </div>
-              <span className="text-[8px] text-error font-bold">↑8%</span>
+            <div className="flex items-center gap-1.5 text-[10px] font-semibold text-on-surface-variant">
+              <span title="Cartões de Estudante" className="flex items-center gap-0.5 text-error font-bold">
+                <CreditCard className="w-3 h-3" /> 14
+              </span>
+              <span className="text-outline/40">·</span>
+              <span title="Certificados" className="flex items-center gap-0.5 text-amber-600 font-bold">
+                <Award className="w-3 h-3" /> 5
+              </span>
+              <span className="text-outline/40">·</span>
+              <span title="Declarações" className="flex items-center gap-0.5 text-info font-bold">
+                <GraduationCap className="w-3 h-3" /> 8
+              </span>
             </div>
           </div>
         </div>
