@@ -84,6 +84,14 @@ export const AlunoPortalView: React.FC<AlunoPortalViewProps> = ({ onShowToast })
 
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
           <button
+            onClick={() => setMustChangePassword(!mustChangePassword)}
+            className="bg-surface-container text-on-surface-variant hover:bg-surface-container-high px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors border border-border-subtle"
+            title="Alterar Palavra-Passe"
+          >
+            <KeyRound className="w-4 h-4 stroke-[1.75]" />
+            Palavra-Passe
+          </button>
+          <button
             onClick={() => setActiveTab('cartao')}
             className="bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
           >
