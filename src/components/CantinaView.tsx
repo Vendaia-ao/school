@@ -514,9 +514,7 @@ export const CantinaView: React.FC<CantinaViewProps> = ({ onShowToast }) => {
               <ShoppingBasket className="w-3 h-3" /> {vendasHojeCount} Refeições / Vendas
             </span>
           </div>
-          <div className="p-3 bg-primary/10 text-primary rounded-xl">
-            <TrendingUp className="w-6 h-6 stroke-[2]" />
-          </div>
+          <TrendingUp className="w-6 h-6 stroke-[2] text-primary" />
         </div>
 
         <div className="bg-surface-white border border-border-subtle rounded-xl p-4 shadow-sm flex items-center justify-between">
@@ -527,9 +525,7 @@ export const CantinaView: React.FC<CantinaViewProps> = ({ onShowToast }) => {
               {Math.round((faturadoHojeCarteira / (faturadoHojeCarteira + faturadoHojeDinheiro || 1)) * 100)}% das vendas hoje
             </span>
           </div>
-          <div className="p-3 bg-secondary/10 text-secondary rounded-xl">
-            <Wallet className="w-6 h-6 stroke-[2]" />
-          </div>
+          <Wallet className="w-6 h-6 stroke-[2] text-secondary" />
         </div>
 
         <div className="bg-surface-white border border-border-subtle rounded-xl p-4 shadow-sm flex items-center justify-between">
@@ -540,9 +536,7 @@ export const CantinaView: React.FC<CantinaViewProps> = ({ onShowToast }) => {
               Pagamentos presenciais
             </span>
           </div>
-          <div className="p-3 bg-info/10 text-info rounded-xl">
-            <Receipt className="w-6 h-6 stroke-[2]" />
-          </div>
+          <Receipt className="w-6 h-6 stroke-[2] text-info" />
         </div>
 
         <div className="bg-surface-white border border-border-subtle rounded-xl p-4 shadow-sm flex items-center justify-between">
@@ -553,9 +547,7 @@ export const CantinaView: React.FC<CantinaViewProps> = ({ onShowToast }) => {
               <AlertTriangle className="w-3 h-3" /> Reposição Recomendada
             </span>
           </div>
-          <div className="p-3 bg-error/10 text-error rounded-xl">
-            <Package className="w-6 h-6 stroke-[2]" />
-          </div>
+          <Package className="w-6 h-6 stroke-[2] text-error" />
         </div>
       </div>
 

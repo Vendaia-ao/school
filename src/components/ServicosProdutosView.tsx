@@ -476,9 +476,7 @@ export const ServicosProdutosView: React.FC<ServicosProdutosViewProps> = ({ onSh
               <CheckCircle2 className="w-3 h-3" /> {totalAtivos} Ativos e Disponíveis
             </span>
           </div>
-          <div className="p-3 bg-primary/10 text-primary rounded-xl">
-            <Layers className="w-6 h-6 stroke-[2]" />
-          </div>
+          <Layers className="w-6 h-6 stroke-[2] text-primary" />
         </div>
 
         <div className="bg-surface-white border border-border-subtle rounded-xl p-4 shadow-sm flex items-center justify-between">
@@ -489,9 +487,7 @@ export const ServicosProdutosView: React.FC<ServicosProdutosViewProps> = ({ onSh
               Média Propina: {formatKz(mediaPrecoPropinas)}
             </span>
           </div>
-          <div className="p-3 bg-secondary/10 text-secondary rounded-xl">
-            <RefreshCw className="w-6 h-6 stroke-[2]" />
-          </div>
+          <RefreshCw className="w-6 h-6 stroke-[2] text-secondary" />
         </div>
 
         <div className="bg-surface-white border border-border-subtle rounded-xl p-4 shadow-sm flex items-center justify-between">
@@ -502,9 +498,7 @@ export const ServicosProdutosView: React.FC<ServicosProdutosViewProps> = ({ onSh
               Tolerância: {globalBillingRules.diasToleranciaPadrao} Dias Sem Penalidade
             </span>
           </div>
-          <div className="p-3 bg-error/10 text-error rounded-xl">
-            <Percent className="w-6 h-6 stroke-[2]" />
-          </div>
+          <Percent className="w-6 h-6 stroke-[2] text-error" />
         </div>
 
         <div className="bg-surface-white border border-border-subtle rounded-xl p-4 shadow-sm flex items-center justify-between">
@@ -515,9 +509,7 @@ export const ServicosProdutosView: React.FC<ServicosProdutosViewProps> = ({ onSh
               Integração Financeira Directa
             </span>
           </div>
-          <div className="p-3 bg-info/10 text-info rounded-xl">
-            <Tag className="w-6 h-6 stroke-[2]" />
-          </div>
+          <Tag className="w-6 h-6 stroke-[2] text-info" />
         </div>
       </div>
 

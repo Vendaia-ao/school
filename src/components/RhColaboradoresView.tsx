@@ -254,7 +254,7 @@ export const RhColaboradoresView: React.FC<Props> = ({ onShowToast }) => {
             {departments.map((d) => (
               <div key={d.id} className="border border-border-subtle rounded-lg p-4 hover:shadow-md transition-all">
                 <div className="flex justify-between items-start mb-3">
-                  <div className="w-9 h-9 bg-primary/10 text-primary rounded-lg flex items-center justify-center"><Building2 className="w-5 h-5" /></div>
+                  <Building2 className="w-5 h-5 text-primary" />
                   <span className="bg-success/15 text-success px-2 py-0.5 rounded-full text-[10px] font-bold">Ativo</span>
                 </div>
                 <h3 className="text-sm font-bold text-primary">{d.nome}</h3>

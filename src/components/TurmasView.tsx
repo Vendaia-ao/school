@@ -478,9 +478,7 @@ export const TurmasView: React.FC<TurmasViewProps> = ({ onSelectView, onShowToas
       {/* Quick Metrics Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-surface-white border border-border-subtle rounded-xl p-3 shadow-sm flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-transparent text-info flex items-center justify-center">
-            <DoorClosed className="w-5 h-5 stroke-[1.75]" />
-          </div>
+          <DoorClosed className="w-5 h-5 stroke-[1.75] text-info" />
           <div>
             <p className="text-[10px] uppercase font-bold text-outline tracking-wider">Total de Turmas</p>
             <p className="font-headline-sm text-lg font-bold text-primary">{turmas.length} Ativas</p>
@@ -498,9 +496,7 @@ export const TurmasView: React.FC<TurmasViewProps> = ({ onSelectView, onShowToas
         </div>
 
         <div className="bg-surface-white border border-border-subtle rounded-xl p-3 shadow-sm flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-transparent text-warning flex items-center justify-center">
-            <UserCheck className="w-5 h-5 stroke-[1.75]" />
-          </div>
+          <UserCheck className="w-5 h-5 stroke-[1.75] text-warning" />
           <div>
             <p className="text-[10px] uppercase font-bold text-outline tracking-wider">Diretores de Turma</p>
             <p className="font-headline-sm text-lg font-bold text-primary">12 Atribuídos</p>
@@ -508,9 +504,7 @@ export const TurmasView: React.FC<TurmasViewProps> = ({ onSelectView, onShowToas
         </div>
 
         <div className="bg-surface-white border border-border-subtle rounded-xl p-3 shadow-sm flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-transparent text-secondary flex items-center justify-center">
-            <Clock className="w-5 h-5 stroke-[1.75]" />
-          </div>
+          <Clock className="w-5 h-5 stroke-[1.75] text-secondary" />
           <div>
             <p className="text-[10px] uppercase font-bold text-outline tracking-wider">Horários Gerados</p>
             <p className="font-headline-sm text-lg font-bold text-primary">100% Válidos</p>

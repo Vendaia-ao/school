@@ -183,9 +183,7 @@ export const ProfessoresView: React.FC<ProfessoresViewProps> = ({ onSelectView, 
       {/* Quick Metrics Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-surface-white border border-border-subtle rounded-xl p-3 shadow-sm flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-transparent text-info flex items-center justify-center">
-            <UserCheck className="w-5 h-5 stroke-[1.75]" />
-          </div>
+          <UserCheck className="w-5 h-5 stroke-[1.75] text-info" />
           <div>
             <p className="text-[10px] uppercase font-bold text-outline tracking-wider">Total Docentes</p>
             <p className="font-headline-sm text-lg font-bold text-primary">{professores.length} Ativos</p>
@@ -193,9 +191,7 @@ export const ProfessoresView: React.FC<ProfessoresViewProps> = ({ onSelectView, 
         </div>
 
         <div className="bg-surface-white border border-border-subtle rounded-xl p-3 shadow-sm flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-transparent text-success flex items-center justify-center">
-            <Clock className="w-5 h-5 stroke-[1.75]" />
-          </div>
+          <Clock className="w-5 h-5 stroke-[1.75] text-success" />
           <div>
             <p className="text-[10px] uppercase font-bold text-outline tracking-wider">Carga Horária Média</p>
             <p className="font-headline-sm text-lg font-bold text-primary">23 hrs/semana</p>
@@ -213,9 +209,7 @@ export const ProfessoresView: React.FC<ProfessoresViewProps> = ({ onSelectView, 
         </div>
 
         <div className="bg-surface-white border border-border-subtle rounded-xl p-3 shadow-sm flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-transparent text-secondary flex items-center justify-center">
-            <Star className="w-5 h-5 stroke-[1.75]" />
-          </div>
+          <Star className="w-5 h-5 stroke-[1.75] text-secondary" />
           <div>
             <p className="text-[10px] uppercase font-bold text-outline tracking-wider">Avaliação Média</p>
             <p className="font-headline-sm text-lg font-bold text-primary">4.8 / 5.0</p>

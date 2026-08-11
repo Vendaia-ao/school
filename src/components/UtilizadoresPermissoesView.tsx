@@ -424,19 +424,19 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-surface-white border border-border-subtle rounded-xl p-3 shadow-sm flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-transparent text-success flex items-center justify-center"><Users className="w-5 h-5 stroke-[1.75]" /></div>
+          <Users className="w-5 h-5 stroke-[1.75] text-success" />
           <div><p className="text-[10px] uppercase font-bold text-outline tracking-wider">Utilizadores Ativos</p><p className="font-headline-sm text-lg font-bold text-primary">{activeCount}</p></div>
         </div>
         <div className="bg-surface-white border border-border-subtle rounded-xl p-3 shadow-sm flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-transparent text-warning flex items-center justify-center"><Power className="w-5 h-5 stroke-[1.75]" /></div>
+          <Power className="w-5 h-5 stroke-[1.75] text-warning" />
           <div><p className="text-[10px] uppercase font-bold text-outline tracking-wider">Inativos / Bloqueados</p><p className="font-headline-sm text-lg font-bold text-primary">{inactiveCount + blockedCount}</p></div>
         </div>
         <div className="bg-surface-white border border-border-subtle rounded-xl p-3 shadow-sm flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-transparent text-info flex items-center justify-center"><UserCog className="w-5 h-5 stroke-[1.75]" /></div>
+          <UserCog className="w-5 h-5 stroke-[1.75] text-info" />
           <div><p className="text-[10px] uppercase font-bold text-outline tracking-wider">Grupos Ativos</p><p className="font-headline-sm text-lg font-bold text-primary">{groupCount}</p></div>
         </div>
         <div className="bg-surface-white border border-border-subtle rounded-xl p-3 shadow-sm flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-transparent text-secondary flex items-center justify-center"><ScrollText className="w-5 h-5 stroke-[1.75]" /></div>
+          <ScrollText className="w-5 h-5 stroke-[1.75] text-secondary" />
           <div><p className="text-[10px] uppercase font-bold text-outline tracking-wider">Registos de Auditoria</p><p className="font-headline-sm text-lg font-bold text-primary">{logs.length}</p></div>
         </div>
       </div>
