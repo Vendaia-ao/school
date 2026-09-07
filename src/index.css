@@ -1,0 +1,294 @@
+@import "tailwindcss";
+
+@theme {
+  --radius-xs: 1px;
+  --radius-sm: 1px;
+  --radius-md: 1px;
+  --radius-lg: 1px;
+  --radius-xl: 1px;
+  --radius-2xl: 1px;
+  --radius-3xl: 1px;
+  --radius-4xl: 1px;
+  --radius-full: 1px;
+  --radius: 1px;
+
+  --font-sans: 'Hanken Grotesk', sans-serif;
+  --font-body-md: 'Hanken Grotesk', sans-serif;
+  
+  --color-primary: #041939;
+  --color-primary-container: #061b3b;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #7284a9;
+  --color-inverse-primary: #b5c7ef;
+  
+  --color-secondary: #a04100;
+  --color-secondary-container: #fe6b00;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #572000;
+  
+  --color-tertiary: #000000;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #341103;
+  --color-on-tertiary-container: #af765f;
+  
+  --color-surface: #f8f9fa;
+  --color-surface-white: #ffffff;
+  --color-surface-bright: #f8f9fa;
+  --color-surface-dim: #d9dadb;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f3f4f5;
+  --color-surface-container: #edeeef;
+  --color-surface-container-high: #e7e8e9;
+  --color-surface-container-highest: #e1e3e4;
+  --color-surface-variant: #e1e3e4;
+  
+  --color-background: #f8f9fa;
+  --color-on-background: #191c1d;
+  --color-on-surface: #191c1d;
+  --color-on-surface-variant: #44474e;
+  
+  --color-outline: #75777f;
+  --color-outline-variant: #c5c6cf;
+  --color-border-subtle: #E5E7EB;
+  
+  --color-success: #16A34A;
+  --color-warning: #F59E0B;
+  --color-error: #DC2626;
+  --color-info: #2563EB;
+
+  --spacing-header-height: 48px;
+  --spacing-sidebar-width: 260px;
+}
+
+/* Typography utilities aligned with DESIGN.md */
+.font-headline-lg, .headline-lg {
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+  letter-spacing: -0.02em;
+}
+
+.font-headline-md, .headline-md {
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+  letter-spacing: -0.01em;
+}
+
+.font-headline-sm, .headline-sm {
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+.font-title-lg, .title-lg {
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.font-body-lg, .body-lg {
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.font-body-md, .body-md {
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.font-label-md, .label-md {
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: 0.01em;
+}
+
+.font-label-sm, .label-sm {
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.03em;
+}
+
+.font-caption-xs, .caption-xs {
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 12px;
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+.sidebar-expanded { width: 260px; }
+.sidebar-collapsed { width: 80px; }
+
+body.sidebar-expanded-body .main-content { margin-left: 260px; width: calc(100% - 260px); }
+body.sidebar-collapsed-body .main-content { margin-left: 80px; width: calc(100% - 80px); }
+
+body.sidebar-expanded-body .header-nav { width: calc(100% - 260px); }
+body.sidebar-collapsed-body .header-nav { width: calc(100% - 80px); }
+
+.has-tooltip {
+  position: relative;
+  cursor: pointer;
+}
+.has-tooltip .tooltip {
+  visibility: hidden;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 4px 8px;
+  position: absolute;
+  z-index: 20;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  font-size: 11px;
+  pointer-events: none;
+}
+.has-tooltip:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Custom Scrollbars — global */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+* {
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+  scrollbar-width: thin;
+}
+
+/* Sidebar (dark background) — lighter thumb */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+.custom-scrollbar {
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+/* Global Table Styles - Enforcing tight 3px row padding & uniform row styling across all tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  color: var(--color-on-surface);
+}
+
+table th,
+th {
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-outline);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+table td,
+td {
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+  font-size: 12px;
+  color: var(--color-on-surface);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+tr {
+  height: auto;
+  transition: background-color 150ms ease;
+}
+
+/* Main structural containers (metric cards, main section panels, tables, modals) keep 1px border radius */
+[class*="rounded-xl"],
+[class*="rounded-2xl"],
+[class*="rounded-3xl"],
+[class*="rounded-lg"] {
+  border-radius: 1px !important;
+}
+
+/* Exception for Receitas vs Dívidas chart donut and inner container (12px border-radius) */
+.rounded-12px,
+.chart-donut-box {
+  border-radius: 12px !important;
+}
+
+/* Internal elements (status badges/pills like ativo/inativo, regularizada/pendente, filter chips, tags, buttons, inputs) get 4px border radius */
+span[class*="rounded"],
+span[class*="bg-"],
+[class*="rounded-full"],
+[class*="rounded-md"],
+[class*="rounded-sm"],
+button[class*="rounded"],
+input[class*="rounded"],
+select[class*="rounded"],
+.badge,
+.status-pill {
+  border-radius: 4px !important;
+}
+
+/* Ensure icon container elements specifically configured as transparent don't inherit card fill */
+div.icon-box {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Custom Ultra-Discrete Shadows Overrides */
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+}
+.shadow,
+.shadow-md {
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.04) !important;
+}
+.shadow-lg {
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05) !important;
+}
+.shadow-xl,
+.shadow-2xl {
+  box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+
+

@@ -1,0 +1,587 @@
+<!DOCTYPE html><html lang="pt" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Vendaia School® - Relatórios e Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-error-container": "#93000a",
+                "secondary-fixed-dim": "#ffb693",
+                "on-tertiary-container": "#af765f",
+                "on-tertiary-fixed": "#341103",
+                "secondary": "#a04100",
+                "outline": "#75777f",
+                "border-subtle": "#E5E7EB",
+                "on-tertiary": "#ffffff",
+                "on-primary-fixed-variant": "#354769",
+                "success": "#16A34A",
+                "on-error": "#ffffff",
+                "secondary-fixed": "#ffdbcc",
+                "inverse-primary": "#b5c7ef",
+                "surface": "#f8f9fa",
+                "on-surface-variant": "#44474e",
+                "on-background": "#191c1d",
+                "inverse-surface": "#2e3132",
+                "error-container": "#ffdad6",
+                "on-secondary-container": "#572000",
+                "info": "#2563EB",
+                "on-secondary-fixed": "#351000",
+                "outline-variant": "#c5c6cf",
+                "secondary-container": "#fe6b00",
+                "error": "#DC2626",
+                "primary-container": "#061b3b",
+                "on-primary-fixed": "#061b3b",
+                "tertiary-fixed-dim": "#f9b79d",
+                "on-secondary": "#ffffff",
+                "surface-variant": "#e1e3e4",
+                "on-primary-container": "#7284a9",
+                "on-tertiary-fixed-variant": "#693b27",
+                "surface-white": "#FFFFFF",
+                "surface-bright": "#f8f9fa",
+                "surface-tint": "#4d5e82",
+                "background": "#f8f9fa",
+                "tertiary": "#000000",
+                "primary-fixed": "#d7e2ff",
+                "surface-dim": "#d9dadb",
+                "inverse-on-surface": "#f0f1f2",
+                "tertiary-fixed": "#ffdbce",
+                "surface-container-high": "#e7e8e9",
+                "surface-container-lowest": "#ffffff",
+                "primary": "#041939",
+                "on-surface": "#191c1d",
+                "surface-container": "#edeeef",
+                "warning": "#F59E0B",
+                "on-primary": "#ffffff",
+                "surface-container-highest": "#e1e3e4",
+                "surface-container-low": "#f3f4f5",
+                "tertiary-container": "#341103",
+                "on-secondary-fixed-variant": "#7a2f00",
+                "primary-fixed-dim": "#b5c7ef"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+        },
+        "spacing": {
+                "header-height": "48px",
+                "margin-desktop": "24px",
+                "unit": "4px",
+                "sidebar-width": "260px",
+                "gutter": "16px"
+        },
+        "fontFamily": {
+                "caption-xs": [
+                        "Hanken Grotesk"
+                ],
+                "label-sm": [
+                        "Hanken Grotesk"
+                ],
+                "headline-md": [
+                        "Hanken Grotesk"
+                ],
+                "headline-lg": [
+                        "Hanken Grotesk"
+                ],
+                "title-lg": [
+                        "Hanken Grotesk"
+                ],
+                "body-md": [
+                        "Hanken Grotesk"
+                ],
+                "headline-sm": [
+                        "Hanken Grotesk"
+                ],
+                "label-md": [
+                        "Hanken Grotesk"
+                ],
+                "body-lg": [
+                        "Hanken Grotesk"
+                ]
+        },
+        "fontSize": {
+                "caption-xs": [
+                        "10px",
+                        {
+                                "lineHeight": "12px",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-sm": [
+                        "11px",
+                        {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.03em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "title-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-sm": [
+                        "20px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-md": [
+                        "13px",
+                        {
+                                "lineHeight": "18px",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-lg": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 20px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .sidebar-expanded .sidebar-text { display: block; }
+        .sidebar-collapsed .sidebar-text { display: none; }
+        
+        .sidebar-expanded { width: 260px; }
+        .sidebar-collapsed { width: 80px; }
+        
+        body.sidebar-expanded-body .main-content { margin-left: 260px; width: calc(100% - 260px); }
+        body.sidebar-collapsed-body .main-content { margin-left: 80px; width: calc(100% - 80px); }
+        
+        body.sidebar-expanded-body .header-nav { width: calc(100% - 260px); }
+        body.sidebar-collapsed-body .header-nav { width: calc(100% - 80px); }
+        
+        #academic-menu-items {
+            display: none;
+        }
+        #academic-menu:checked ~ #academic-menu-items {
+            display: block;
+        }
+
+        .sidebar-collapsed #academic-menu:checked ~ #academic-menu-items {
+            display: none;
+        }
+
+        .sidebar-collapsed .menu-item { justify-content: center; }
+        .sidebar-collapsed .menu-header { flex-direction: column; text-align: center; justify-content: center; }
+        .sidebar-collapsed .menu-header .sidebar-text { display: none; }
+        
+        .has-tooltip {
+            position: relative;
+            cursor: pointer;
+        }
+        .has-tooltip .tooltip {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 4px 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            font-size: 11px;
+        }
+        .has-tooltip:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const body = document.body;
+        if (sidebar.classList.contains('sidebar-expanded')) {
+            sidebar.classList.remove('sidebar-expanded');
+            sidebar.classList.add('sidebar-collapsed');
+            body.classList.remove('sidebar-expanded-body');
+            body.classList.add('sidebar-collapsed-body');
+        } else {
+            sidebar.classList.remove('sidebar-collapsed');
+            sidebar.classList.add('sidebar-expanded');
+            body.classList.remove('sidebar-collapsed-body');
+            body.classList.add('sidebar-expanded-body');
+        }
+    }
+</script>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex text-[13px] sidebar-expanded-body" data-mode="connect">
+<!-- SideNavBar -->
+<aside class="sidebar-expanded fixed left-0 top-0 h-full flex flex-col bg-primary-container border-r border-outline-variant z-50 transition-all duration-300" id="sidebar">
+<div class="p-4 border-b border-on-primary-container/20 flex items-center justify-between menu-header h-[72px]">
+<div class="sidebar-text truncate">
+<h1 class="font-title-lg text-title-lg font-bold text-on-primary mb-0.5">Vendaia School®</h1>
+<p class="font-label-sm text-label-sm text-on-primary-container">SaaS Enterprise</p>
+</div>
+<button class="text-on-primary-container hover:text-on-primary p-1 rounded hover:bg-on-primary-container/20 transition-colors mx-auto" onclick="toggleSidebar()">
+<span class="material-symbols-outlined text-[18px]">menu</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto">
+<nav class="px-2 py-2 space-y-0.5">
+<a class="flex items-center gap-2 px-3 py-2 text-on-primary bg-on-primary-container/20 border-l-2 border-secondary rounded-r transition-colors menu-item" href="#" title="Dashboard">
+<span class="material-symbols-outlined text-[18px]" data-icon="dashboard">dashboard</span>
+<span class="font-label-md sidebar-text">Dashboard</span>
+</a>
+<div>
+<input class="hidden" id="academic-menu" type="checkbox">
+<label class="flex items-center justify-between px-3 py-2 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 rounded cursor-pointer menu-item transition-all" for="academic-menu" title="Gestão Académica">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="school">school</span>
+<span class="font-label-md sidebar-text">Gestão Académica</span>
+</div>
+<span class="material-symbols-outlined text-[18px] sidebar-text">expand_more</span>
+</label>
+<div class="sidebar-text ml-6 mt-1 space-y-0.5" id="academic-menu-items">
+<a class="block px-3 py-1.5 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 rounded" href="#">Estudantes</a>
+<a class="block px-3 py-1.5 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 rounded" href="#">Turmas</a>
+<a class="block px-3 py-1.5 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 rounded" href="#">Professores</a>
+<a class="block px-3 py-1.5 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 rounded" href="#">Configurações Académicas</a>
+<a class="block px-3 py-1.5 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 rounded" href="#">Portal do Aluno</a>
+<a class="block px-3 py-1.5 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 rounded" href="#">Portal do Encarregado</a>
+<a class="block px-3 py-1.5 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 rounded" href="#">Portal do Professor</a>
+</div>
+</div>
+<a class="flex items-center gap-2 px-3 py-2 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 transition-colors rounded menu-item" href="#" title="Biblioteca Digital">
+<span class="material-symbols-outlined text-[18px]" data-icon="local_library">local_library</span>
+<span class="font-label-md sidebar-text">Biblioteca Digital</span>
+</a>
+<a class="flex items-center gap-2 px-3 py-2 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 transition-colors rounded menu-item" href="#" title="Serviços Institucionais">
+<span class="material-symbols-outlined text-[18px]" data-icon="account_balance">account_balance</span>
+<span class="font-label-md sidebar-text">Serviços Institucionais</span>
+</a>
+<a class="flex items-center gap-2 px-3 py-2 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 transition-colors rounded menu-item" href="#" title="Gestão Financeira">
+<span class="material-symbols-outlined text-[18px]" data-icon="payments">payments</span>
+<span class="font-label-md sidebar-text">Gestão Financeira</span>
+</a>
+<a class="flex items-center gap-2 px-3 py-2 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 transition-colors rounded menu-item" href="#" title="Recursos Humanos">
+<span class="material-symbols-outlined text-[18px]" data-icon="groups">groups</span>
+<span class="font-label-md sidebar-text">Recursos Humanos</span>
+</a>
+<a class="flex items-center gap-2 px-3 py-2 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 transition-colors rounded menu-item" href="#" title="Gestão Documental">
+<span class="material-symbols-outlined text-[18px]" data-icon="description">description</span>
+<span class="font-label-md sidebar-text">Gestão Documental</span>
+</a>
+<a class="flex items-center gap-2 px-3 py-2 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 transition-colors rounded menu-item" href="#" title="Comunicação">
+<span class="material-symbols-outlined text-[18px]" data-icon="campaign">campaign</span>
+<span class="font-label-md sidebar-text">Relatórios e Analytics</span>
+</a>
+<a class="flex items-center gap-2 px-3 py-2 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 transition-colors rounded menu-item" href="#" title="Administração">
+<span class="material-symbols-outlined text-[18px]" data-icon="settings">settings</span>
+<span class="font-label-md sidebar-text">Configurações</span>
+</a>
+</nav>
+</div>
+<div class="border-t border-on-primary-container/20 p-2">
+<a class="flex items-center gap-2 px-3 py-1.5 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 transition-colors rounded menu-item" href="#" title="Suporte">
+<span class="material-symbols-outlined text-[18px]" data-icon="help_outline">help_outline</span>
+<span class="font-label-md sidebar-text">Suporte</span>
+</a>
+<a class="flex items-center gap-2 px-3 py-1.5 text-on-primary-container hover:text-on-primary hover:bg-on-primary-container/20 transition-colors rounded menu-item" href="#" title="Sair">
+<span class="material-symbols-outlined text-[18px]" data-icon="logout">logout</span>
+<span class="font-label-md sidebar-text">Sair</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="main-content flex-1 flex flex-col min-h-screen transition-all duration-300">
+<!-- TopNavBar -->
+<header class="header-nav fixed top-0 right-0 h-header-height flex justify-between items-center px-4 bg-surface-white z-40 border-b border-border-subtle shadow-sm transition-all duration-300 bg-surface-white/80"><div class="flex items-center gap-4"><div class="flex items-center text-xs font-medium text-on-surface-variant"><span class="hover:text-secondary cursor-pointer">Dashboard</span><span class="material-symbols-outlined text-[14px] mx-1">chevron_right</span></div></div><div class="flex items-center gap-1"><div class="flex items-center gap-0.5"><button class="relative text-on-surface-variant hover:text-secondary transition-colors p-1.5 rounded-full hover:bg-surface-variant/50"><span class="material-symbols-outlined" data-icon="notifications">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full border-2 border-surface-white"></span></button><button class="text-on-surface-variant hover:text-secondary transition-colors p-1.5 rounded-full hover:bg-surface-variant/50"><span class="material-symbols-outlined">mail</span></button><button class="text-on-surface-variant hover:text-secondary transition-colors p-1.5 rounded-full hover:bg-surface-variant/50"><span class="material-symbols-outlined">calendar_today</span></button></div><div class="h-6 w-px bg-border-subtle mx-2"></div><div class="relative cursor-pointer group"><div class="relative"><img alt="Admin" class="w-8 h-8 rounded-full object-cover border border-border-subtle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0PHMtuHCPjqYvbeW0IqGfyIVpXJvP3Y4qU5DuRFKSfWrSNVKhe4d9di8PHWM1isnkuQEUd2TANAKSBhRbDzoKiJWlNQOqFrJowop2RKZapB1TnCrX12hHcyVbl9Dn-eLXfqeFiI9hYkGlJ8ZcFbpsMe156xSdUmJwxtCYzv6icni29LwQ-KQBcnTrt-P9dcwXv2lTpBpGDUAz6k7mF5eGmiIBGR08OfEpJGUPWPInDnzJ-IKwZRNhdA"><span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-success border-2 border-surface-white rounded-full"></span></div></div></div></header>
+<!-- Page Content -->
+<div class="mt-header-height p-4 w-full flex flex-col gap-3">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-2">
+<div>
+
+
+</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center border border-border-subtle bg-surface-white rounded-md h-7 px-2 gap-1 text-on-surface shadow-sm cursor-pointer hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-outline" style="font-size: 14px;">calendar_month</span>
+<span class="font-label-sm text-[10px] font-medium">Últimos 30 Dias</span>
+<span class="material-symbols-outlined text-outline" style="font-size: 14px;">arrow_drop_down</span>
+</div>
+<button class="flex items-center bg-surface-white border border-border-subtle hover:bg-surface-container-low text-on-surface font-semibold text-[10px] h-7 px-2 rounded-md transition-colors gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">download</span>
+                        Exportar
+                    </button>
+</div>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+<!-- Card 1 -->
+<div class="bg-surface-white border border-outline-variant/30 rounded-lg px-4 py-3 shadow-sm flex items-center justify-between transition-all hover:shadow-md h-[68px]"><div class="flex flex-col justify-center">
+<span class="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider mb-0.5">Total Estudantes</span>
+<span class="text-2xl font-bold text-primary leading-none">1.432</span>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-success bg-success/10 text-[10px] font-bold">
+<span class="material-symbols-outlined text-[14px] mr-0.5">trending_up</span> +5%
+  </span>
+<span class="text-[9px] text-outline font-medium uppercase">vs ano anterior</span>
+</div></div>
+<!-- Card 2 -->
+<div class="bg-surface-white border border-outline-variant/30 rounded-lg px-4 py-3 shadow-sm flex items-center justify-between transition-all hover:shadow-md h-[68px]"><div class="flex flex-col justify-center">
+<span class="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider mb-0.5">Média Global</span>
+<div class="text-2xl font-bold text-primary leading-none">14.5<span class="text-sm text-outline font-medium">/20</span></div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-success bg-success/10 text-[10px] font-bold">
+<span class="material-symbols-outlined text-[14px] mr-0.5">trending_up</span> +0.8
+  </span>
+<span class="text-[9px] text-outline font-medium uppercase">vs sem. anterior</span>
+</div></div>
+<!-- Card 3 -->
+<div class="bg-surface-white border border-outline-variant/30 rounded-lg px-4 py-3 shadow-sm flex items-center transition-all hover:shadow-md h-[68px]"><div class="w-full flex flex-col justify-center gap-1.5">
+<div class="flex justify-between items-end">
+<span class="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider">Cobrança Financeira</span>
+<div class="flex items-center gap-2">
+<span class="text-warning font-bold text-[12px]">88%</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-warning h-full rounded-full" style="width: 88%"></div>
+</div>
+<div class="flex justify-between text-[9px] font-medium uppercase text-outline">
+<span class="text-warning">Abaixo da meta (95%)</span>
+</div>
+</div></div>
+<!-- Card 4 -->
+<div class="bg-surface-white border border-outline-variant/30 rounded-lg px-4 py-3 shadow-sm flex items-center transition-all hover:shadow-md h-[68px]"><div class="w-full flex flex-col justify-center gap-1.5">
+<div class="flex justify-between items-end">
+<span class="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider">Taxa Assiduidade</span>
+<div class="flex items-center gap-2">
+<span class="text-success font-bold text-[12px]">94.2%</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-success h-full rounded-full" style="width: 94.2%"></div>
+</div>
+<div class="flex justify-between text-[9px] font-medium uppercase text-outline">
+<span class="text-success flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px]">check_circle</span>Estável</span>
+</div>
+</div></div></div>
+<!-- Main Analytics Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<!-- Chart 1: Academic Performance -->
+<div class="col-span-2 bg-surface-white border border-outline-variant/30 rounded-lg shadow-sm flex flex-col p-4 h-[300px]">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-title-lg text-[14px] text-primary font-bold">Desempenho Académico por Ciclo</h3>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1">
+<div class="w-2.5 h-2.5 bg-primary rounded-sm"></div>
+<span class="font-label-sm text-[9px] text-outline uppercase font-semibold">Ensino Básico</span>
+</div>
+<div class="flex items-center gap-1">
+<div class="w-2.5 h-2.5 bg-secondary rounded-sm"></div>
+<span class="font-label-sm text-[9px] text-outline uppercase font-semibold">Secundário</span>
+</div>
+<button class="p-0.5 text-outline hover:text-primary transition-colors rounded"><span class="material-symbols-outlined text-[16px]">more_vert</span></button>
+</div>
+</div>
+<!-- Simplified Bar Chart Representation -->
+<div class="flex-1 relative flex items-end justify-around pb-5 pt-2 border-l border-b border-border-subtle ml-4">
+<!-- Y-axis labels -->
+<div class="absolute left-[-20px] top-0 bottom-5 flex flex-col justify-between font-label-sm text-[9px] text-outline">
+<span class="">20</span><span class="">15</span><span class="">10</span><span class="">5</span><span class="">0</span>
+</div>
+<!-- Grid lines -->
+<div class="absolute inset-0 bottom-5 flex flex-col justify-between z-0 ml-1">
+<div class="w-full border-t border-border-subtle/50"></div>
+<div class="w-full border-t border-border-subtle/50"></div>
+<div class="w-full border-t border-border-subtle/50"></div>
+<div class="w-full border-t border-border-subtle/50"></div>
+<div></div>
+</div>
+<!-- Bars -->
+<div class="z-10 flex gap-1 items-end h-[80%] relative group">
+<div class="w-6 sm:w-8 bg-primary h-[70%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
+<div class="w-6 sm:w-8 bg-secondary h-[65%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
+<div class="absolute -bottom-5 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant w-max font-medium">Português</div>
+</div>
+<div class="z-10 flex gap-1 items-end h-[80%] relative group">
+<div class="w-6 sm:w-8 bg-primary h-[60%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
+<div class="w-6 sm:w-8 bg-secondary h-[55%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
+<div class="absolute -bottom-5 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant w-max font-medium">Matemática</div>
+</div>
+<div class="z-10 flex gap-1 items-end h-[80%] relative group">
+<div class="w-6 sm:w-8 bg-primary h-[85%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
+<div class="w-6 sm:w-8 bg-secondary h-[75%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
+<div class="absolute -bottom-5 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant w-max font-medium">Ciências</div>
+</div>
+<div class="z-10 flex gap-1 items-end h-[80%] relative group">
+<div class="w-6 sm:w-8 bg-primary h-[75%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
+<div class="w-6 sm:w-8 bg-secondary h-[80%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
+<div class="absolute -bottom-5 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant w-max font-medium">Inglês</div>
+</div>
+</div>
+</div>
+<!-- Chart 2: Financial -->
+<div class="col-span-1 bg-surface-white border border-outline-variant/30 rounded-lg shadow-sm flex flex-col p-4 h-[300px]">
+<div class="flex justify-between items-center mb-2">
+<h3 class="font-title-lg text-[14px] text-primary font-bold">Receita vs Dívida</h3>
+<button class="p-0.5 text-outline hover:text-primary transition-colors rounded"><span class="material-symbols-outlined text-[16px]">more_vert</span></button>
+</div>
+<div class="flex-1 flex flex-col items-center justify-center">
+<!-- CSS Conic Gradient Donut with rounded corners as specified -->
+<div class="relative w-32 h-32 flex items-center justify-center mb-4 rounded-xl shadow-sm" style="background: conic-gradient(#041939 0% 88%, #e5e7eb 88% 100%);">
+<div class="w-24 h-24 bg-surface-white rounded-lg flex flex-col items-center justify-center shadow-inner">
+<span class="font-label-sm text-[9px] text-outline uppercase font-semibold mb-0.5 tracking-wider">RECEBIDO</span>
+<span class="font-headline-sm text-2xl text-primary font-bold">88%</span>
+</div>
+</div>
+<div class="w-full flex justify-between px-2 border-t border-border-subtle pt-3">
+<div class="flex flex-col">
+<span class="font-label-sm text-[9px] text-outline font-bold uppercase mb-0.5 tracking-wider">RECEITA</span>
+<span class="font-body-md text-[13px] text-primary font-bold">€1.2M</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-[9px] text-warning font-bold uppercase mb-0.5 tracking-wider leading-tight text-right">EM<br />ATRASO</span>
+<span class="font-body-md text-[13px] text-primary font-bold">€145K</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Detailed Reports Grid -->
+<div>
+<div class="flex justify-between items-center mb-3 mt-2">
+<h2 class="font-title-lg text-[14px] text-primary font-bold">Relatórios Detalhados</h2>
+<a class="font-label-md text-xs text-secondary font-semibold hover:underline" href="#">Ver todos</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+<!-- Report Card 1 -->
+<div class="bg-surface-white border border-outline-variant/30 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer group flex items-start gap-3">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">format_list_bulleted</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-label-md text-[12px] font-semibold text-primary mb-0.5 truncate">Lista de Estudantes por Turma</h4>
+<p class="font-body-md text-[11px] text-on-surface-variant line-clamp-2 mb-1.5 leading-tight">Exportação completa de alunos organizados por ano letivo e turma com dados de contacto.</p>
+<span class="inline-block bg-surface-container-low font-label-sm text-[9px] font-medium px-1.5 py-0.5 rounded text-outline uppercase">Gerado hoje</span>
+</div>
+</div>
+<!-- Report Card 2 -->
+<div class="bg-surface-white border border-outline-variant/30 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer group flex items-start gap-3">
+<div class="w-8 h-8 rounded bg-secondary/10 flex items-center justify-center text-secondary shrink-0 group-hover:bg-secondary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">assignment</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-label-md text-[12px] font-semibold text-primary mb-0.5 truncate">Pautas de Avaliação</h4>
+<p class="font-body-md text-[11px] text-on-surface-variant line-clamp-2 mb-1.5 leading-tight">Notas finais e intercalares agregadas por disciplina e professor responsável.</p>
+<span class="inline-block bg-surface-container-low font-label-sm text-[9px] font-medium px-1.5 py-0.5 rounded text-outline uppercase">Gerado há 2 dias</span>
+</div>
+</div>
+<!-- Report Card 3 -->
+<div class="bg-surface-white border border-outline-variant/30 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer group flex items-start gap-3">
+<div class="w-8 h-8 rounded bg-error/10 flex items-center justify-center text-error shrink-0 group-hover:bg-error group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-label-md text-[12px] font-semibold text-primary mb-0.5 truncate">Relatório de Propinas em Atraso</h4>
+<p class="font-body-md text-[11px] text-on-surface-variant line-clamp-2 mb-1.5 leading-tight">Listagem de dívidas ativas ordenadas por tempo de atraso e valor total em dívida.</p>
+<span class="inline-block bg-surface-container-low font-label-sm text-[9px] font-medium px-1.5 py-0.5 rounded text-outline uppercase">Atualização Diária</span>
+</div>
+</div>
+<!-- Report Card 4 -->
+<div class="bg-surface-white border border-outline-variant/30 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer group flex items-start gap-3">
+<div class="w-8 h-8 rounded bg-info/10 flex items-center justify-center text-info shrink-0 group-hover:bg-info group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-label-md text-[12px] font-semibold text-primary mb-0.5 truncate">Mapa de Assiduidade Mensal</h4>
+<p class="font-body-md text-[11px] text-on-surface-variant line-clamp-2 mb-1.5 leading-tight">Registo detalhado de faltas justificadas e injustificadas para reporte à direção.</p>
+<span class="inline-block bg-surface-container-low font-label-sm text-[9px] font-medium px-1.5 py-0.5 rounded text-outline uppercase">Gerado ontem</span>
+</div>
+</div>
+<!-- Report Card 5 -->
+<div class="bg-surface-white border border-outline-variant/30 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer group flex items-start gap-3">
+<div class="w-8 h-8 rounded bg-warning/10 flex items-center justify-center text-warning shrink-0 group-hover:bg-warning group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-label-md text-[12px] font-semibold text-primary mb-0.5 truncate">Estatísticas de Novos Registos</h4>
+<p class="font-body-md text-[11px] text-on-surface-variant line-clamp-2 mb-1.5 leading-tight">Métricas de conversão de leads, origem de alunos e pipeline de novas admissões.</p>
+<span class="inline-block bg-surface-container-low font-label-sm text-[9px] font-medium px-1.5 py-0.5 rounded text-outline uppercase">Gerado há 1 semana</span>
+</div>
+</div>
+<!-- Report Card 6 -->
+<div class="bg-surface-white border border-outline-variant/30 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer group flex items-start gap-3">
+<div class="w-8 h-8 rounded bg-outline/10 flex items-center justify-center text-outline shrink-0 group-hover:bg-outline group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-label-md text-[12px] font-semibold text-primary mb-0.5 truncate">Inventário de Ativos Físicos</h4>
+<p class="font-body-md text-[11px] text-on-surface-variant line-clamp-2 mb-1.5 leading-tight">Contagem e estado de conservação de equipamentos informáticos e mobiliário escolar.</p>
+<span class="inline-block bg-surface-container-low font-label-sm text-[9px] font-medium px-1.5 py-0.5 rounded text-outline uppercase">Gerado há 1 mês</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+
+</body></html>
