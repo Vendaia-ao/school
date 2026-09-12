@@ -245,6 +245,18 @@ export const PERMISSIONS_CATALOG: PermissionModule[] = [
         ],
       },
       {
+        id: 'estruturas',
+        label: 'Estruturas & Unidades',
+        tabs: [
+          'Lista de Estruturas',
+          'Criar Estrutura',
+          'Editar Estrutura',
+          'Ativar / Desativar',
+          'Atribuir Responsáveis',
+          'Configurações da Unidade',
+        ],
+      },
+      {
         id: 'config_instituicao',
         label: 'Configurações da Instituição',
         tabs: [

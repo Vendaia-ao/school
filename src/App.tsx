@@ -37,9 +37,11 @@ import { GestaoDocumentalView } from './components/GestaoDocumentalView';
 import { CmsView } from './components/CmsView';
 import { UtilizadoresPermissoesView } from './components/UtilizadoresPermissoesView';
 import { ConfigInstituicaoView } from './components/ConfigInstituicaoView';
+import { EstruturasView } from './components/EstruturasView';
+import { AccessProvider } from './context/AccessContext';
 import { StudentFormModal, ToastNotification } from './components/Modals';
 
-export default function App() {
+function AppContent() {
   const [currentView, setCurrentView] = useState<ActiveView>('estudantes');
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
 
@@ -358,6 +360,10 @@ export default function App() {
             <UtilizadoresPermissoesView onSelectView={setCurrentView} onShowToast={showToast} />
           )}
 
+          {currentView === 'estruturas' && (
+            <EstruturasView onSelectView={setCurrentView} onShowToast={showToast} />
+          )}
+
           {currentView === 'config_instituicao' && (
             <ConfigInstituicaoView onSelectView={setCurrentView} onShowToast={showToast} />
           )}
@@ -403,5 +409,13 @@ export default function App() {
       {/* Floating Toast Notification */}
       <ToastNotification message={toastMessage} onClose={() => setToastMessage(null)} />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AccessProvider>
+      <AppContent />
+    </AccessProvider>
   );
 }

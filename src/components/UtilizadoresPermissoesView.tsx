@@ -1,14 +1,17 @@
 import React, { useMemo, useState } from 'react';
 import { ActiveView } from '../types';
 import { PERMISSIONS_CATALOG, PermissionLevel } from '../permissionsCatalog';
-import { ShieldCheck, Users, UserPlus, UserCog, KeyRound, ScrollText, Plus, Search, CreditCard as Edit3, Trash2, Power, X, TriangleAlert as AlertTriangle, FileText, ChevronRight } from 'lucide-react';
+import { useAccess } from '../context/AccessContext';
+import { ShieldCheck, Users, UserPlus, UserCog, KeyRound, ScrollText, Plus, Search, CreditCard as Edit3, Trash2, Power, X, TriangleAlert as AlertTriangle, FileText, ChevronRight, Copy, Building2 } from 'lucide-react';
+
+import { PermissionWizardView, WizardTarget } from './PermissionWizardView';
 
 interface Props {
   onSelectView: (view: ActiveView) => void;
   onShowToast: (msg: string) => void;
 }
 
-type Tab = 'utilizadores' | 'grupos' | 'permissoes' | 'auditoria';
+type Tab = 'utilizadores' | 'grupos' | 'auditoria';
 
 interface UserItem {
   id: string;
@@ -20,6 +23,9 @@ interface UserItem {
   ultimoAcesso: string;
   criado: string;
   avatar?: string;
+  acessoConsolidado?: boolean;
+  estruturasAutorizadas?: string[];
+  estruturaPrincipalId?: string;
 }
 
 interface GroupItem {
@@ -219,6 +225,7 @@ const PermissionsPanel: React.FC<{
 );
 
 export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => {
+  const { structures, userAccesses, setUserAccesses } = useAccess();
   const [tab, setTab] = useState<Tab>('utilizadores');
   const [users, setUsers] = useState<UserItem[]>(initialUsers);
   const [groups, setGroups] = useState<GroupItem[]>(initialGroups);
@@ -228,6 +235,7 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
   const [filterPerfil, setFilterPerfil] = useState('Todos');
   const [filterNivel, setFilterNivel] = useState('Todos');
 
+  const [wizardTarget, setWizardTarget] = useState<WizardTarget | null>(null);
   const [userModal, setUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState<UserItem | null>(null);
   const [confirmDeleteUser, setConfirmDeleteUser] = useState<UserItem | null>(null);
@@ -236,7 +244,16 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
   const [editingGroup, setEditingGroup] = useState<GroupItem | null>(null);
   const [confirmDeleteGroup, setConfirmDeleteGroup] = useState<GroupItem | null>(null);
 
-  const [userForm, setUserForm] = useState({ nome: '', email: '', perfil: 'Professor', grupo: 'Corpo Docente', estado: 'Ativo' as UserItem['estado'] });
+  const [userForm, setUserForm] = useState({
+    nome: '',
+    email: '',
+    perfil: 'Professor',
+    grupo: 'Corpo Docente',
+    estado: 'Ativo' as UserItem['estado'],
+    acessoConsolidado: true,
+    estruturasAutorizadas: [] as string[],
+    estruturaPrincipalId: 'str-01',
+  });
   const [groupForm, setGroupForm] = useState({ nome: '', descricao: '', estado: 'Ativo' as GroupItem['estado'] });
   const [newPassword, setNewPassword] = useState('');
 
@@ -268,7 +285,16 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
 
   const openCreateUser = () => {
     setEditingUser(null);
-    setUserForm({ nome: '', email: '', perfil: 'Professor', grupo: 'Corpo Docente', estado: 'Ativo' });
+    setUserForm({
+      nome: '',
+      email: '',
+      perfil: 'Professor',
+      grupo: 'Corpo Docente',
+      estado: 'Ativo',
+      acessoConsolidado: true,
+      estruturasAutorizadas: structures.map(s => s.id),
+      estruturaPrincipalId: structures[0]?.id || 'str-01',
+    });
     setTempPermissions(emptyPerms());
     setExpandedPermModules(new Set());
     setUserModal(true);
@@ -276,7 +302,16 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
 
   const openEditUser = (user: UserItem) => {
     setEditingUser(user);
-    setUserForm({ nome: user.nome, email: user.email, perfil: user.perfil, grupo: user.grupo, estado: user.estado });
+    setUserForm({
+      nome: user.nome,
+      email: user.email,
+      perfil: user.perfil,
+      grupo: user.grupo,
+      estado: user.estado,
+      acessoConsolidado: user.acessoConsolidado ?? true,
+      estruturasAutorizadas: user.estruturasAutorizadas ?? structures.map(s => s.id),
+      estruturaPrincipalId: user.estruturaPrincipalId ?? (structures[0]?.id || 'str-01'),
+    });
     setTempPermissions(userPermissions[user.id] ? { ...userPermissions[user.id] } : emptyPerms());
     setExpandedPermModules(new Set());
     setUserModal(true);
@@ -284,25 +319,48 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
 
   const saveUser = (e: React.FormEvent) => {
     e.preventDefault();
+    const userId = editingUser ? editingUser.id : `u${Date.now()}`;
+    const updatedUserData: UserItem = {
+      id: userId,
+      nome: userForm.nome,
+      email: userForm.email,
+      perfil: userForm.perfil,
+      grupo: userForm.grupo,
+      estado: userForm.estado,
+      acessoConsolidado: userForm.acessoConsolidado,
+      estruturasAutorizadas: userForm.estruturasAutorizadas,
+      estruturaPrincipalId: userForm.estruturaPrincipalId,
+      ultimoAcesso: editingUser ? editingUser.ultimoAcesso : 'Nunca',
+      criado: editingUser ? editingUser.criado : '10 Ago 2026',
+    };
+
     if (editingUser) {
-      setUsers(users.map((u) => (u.id === editingUser.id ? { ...u, ...userForm } : u)));
-      setUserPermissions({ ...userPermissions, [editingUser.id]: tempPermissions });
+      setUsers(users.map((u) => (u.id === editingUser.id ? updatedUserData : u)));
       onShowToast(`Utilizador "${userForm.nome}" atualizado com sucesso!`);
     } else {
-      const newUser: UserItem = {
-        id: `u${Date.now()}`,
-        nome: userForm.nome,
-        email: userForm.email,
-        perfil: userForm.perfil,
-        grupo: userForm.grupo,
-        estado: userForm.estado,
-        ultimoAcesso: 'Nunca',
-        criado: '10 Ago 2026',
-      };
-      setUsers([newUser, ...users]);
-      setUserPermissions({ ...userPermissions, [newUser.id]: tempPermissions });
+      setUsers([updatedUserData, ...users]);
       onShowToast(`Utilizador "${userForm.nome}" criado com sucesso!`);
     }
+
+    setUserPermissions({ ...userPermissions, [userId]: tempPermissions });
+
+    // Synchronize UserStructureAccess in AccessContext
+    const newAccesses = userAccesses.filter(a => a.userId !== userId);
+    if (userForm.acessoConsolidado) {
+      newAccesses.push({ id: `acc-${Date.now()}-global`, userId, institutionId: 'inst-01', structureId: undefined, isPrimary: true });
+    } else {
+      userForm.estruturasAutorizadas.forEach(structId => {
+        newAccesses.push({
+          id: `acc-${Date.now()}-${structId}`,
+          userId,
+          institutionId: 'inst-01',
+          structureId: structId,
+          isPrimary: structId === userForm.estruturaPrincipalId,
+        });
+      });
+    }
+    setUserAccesses(newAccesses);
+
     setUserModal(false);
   };
 
@@ -378,6 +436,24 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
     setConfirmDeleteGroup(null);
   };
 
+  const cloneGroup = (group: GroupItem) => {
+    const clonedId = `g_${Date.now()}`;
+    const clonedGroup: GroupItem = {
+      id: clonedId,
+      nome: `${group.nome} (Cópia)`,
+      descricao: `Cópia do perfil ${group.nome}`,
+      membros: 0,
+      estado: 'Ativo',
+      permissoes: group.permissoes,
+    };
+    setGroups([...groups, clonedGroup]);
+    setGroupPermissions({
+      ...groupPermissions,
+      [clonedId]: { ...(groupPermissions[group.id] || {}) },
+    });
+    onShowToast(`Perfil "${group.nome}" clonado com sucesso!`);
+  };
+
   const filteredUsers = useMemo(() => users.filter((u) => {
     const matchSearch = `${u.nome} ${u.email} ${u.perfil} ${u.grupo}`.toLowerCase().includes(search.toLowerCase());
     const matchEstado = filterEstado === 'Todos' || u.estado === filterEstado;
@@ -400,8 +476,21 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
   const perfiles = ['Todos', 'Administrador', 'Gestor Académico', 'Professor', 'Tesoureiro', 'Bibliotecário', 'Gestor RH', 'Editor CMS', 'Rececionista'];
   const activeGroups = groups.filter(g => g.estado === 'Ativo');
 
+  if (wizardTarget) {
+    return (
+      <PermissionWizardView
+        target={wizardTarget}
+        onBack={() => setWizardTarget(null)}
+        onSave={(id, data) => {
+          onShowToast(`Permissões salvas no Vendaia Governance® para ${wizardTarget.name}!`);
+        }}
+        onShowToast={onShowToast}
+      />
+    );
+  }
+
   return (
-    <div className="mt-header-height p-4 w-full max-w-7xl mx-auto flex flex-col gap-4">
+    <div className="mt-header-height p-4 sm:p-5 w-full flex flex-col gap-4">
       <div className="flex justify-between items-center mb-1">
         <h1 className="text-xl font-bold text-primary flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-secondary stroke-[1.75]" />
@@ -446,7 +535,6 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
         {([
           { key: 'utilizadores', label: 'Utilizadores', icon: <Users className="w-4 h-4" /> },
           { key: 'grupos', label: 'Grupos de Utilizadores', icon: <UserCog className="w-4 h-4" /> },
-          { key: 'permissoes', label: 'Permissões', icon: <KeyRound className="w-4 h-4" /> },
           { key: 'auditoria', label: 'Auditoria & Logs', icon: <ScrollText className="w-4 h-4" /> },
         ] as { key: Tab; label: string; icon: React.ReactNode }[]).map((item) => (
           <button key={item.key} onClick={() => { setTab(item.key); setSearch(''); setFilterEstado('Todos'); setFilterPerfil('Todos'); setFilterNivel('Todos'); }} className={`flex-1 min-w-[125px] py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${tab === item.key ? 'bg-primary text-surface-white shadow-sm' : 'text-on-surface-variant hover:bg-surface-container hover:text-primary'}`}>
@@ -503,6 +591,7 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
                     <td className="px-3.5 py-3 text-outline">{u.ultimoAcesso}</td>
                     <td className="px-3.5 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
+                        <button onClick={() => setWizardTarget({ type: 'user', id: u.id, name: u.nome, role: u.perfil })} className="p-1.5 text-outline hover:text-secondary rounded hover:bg-secondary/10 transition-colors cursor-pointer" title="Atribuir Permissão (Fluxo Vendaia Governance®)"><ShieldCheck className="w-4 h-4 text-secondary" /></button>
                         <button onClick={() => openEditUser(u)} className="p-1.5 text-outline hover:text-primary rounded hover:bg-primary/10 transition-colors cursor-pointer" title="Editar"><Edit3 className="w-4 h-4" /></button>
                         <button onClick={() => setPasswordModal(u)} className="p-1.5 text-outline hover:text-info rounded hover:bg-info/10 transition-colors cursor-pointer" title="Alterar palavra-passe"><KeyRound className="w-4 h-4" /></button>
                         <button onClick={() => toggleUserStatus(u)} className="p-1.5 text-outline hover:text-warning rounded hover:bg-warning/10 transition-colors cursor-pointer" title="Ativar/Desativar"><Power className="w-4 h-4" /></button>
@@ -563,6 +652,8 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
                       <td className="px-3.5 py-3 text-center"><span className={`${statusChip(g.estado)} px-2.5 py-1 rounded-full text-[11px] font-bold`}>{g.estado}</span></td>
                       <td className="px-3.5 py-3 text-right">
                         <div className="flex items-center justify-end gap-1">
+                          <button onClick={() => setWizardTarget({ type: 'group', id: g.id, name: g.nome })} className="p-1.5 text-outline hover:text-secondary rounded hover:bg-secondary/10 transition-colors cursor-pointer" title="Atribuir Permissão (Fluxo Vendaia Governance®)"><ShieldCheck className="w-4 h-4 text-secondary" /></button>
+                          <button onClick={() => cloneGroup(g)} className="p-1.5 text-outline hover:text-secondary rounded hover:bg-secondary/10 transition-colors cursor-pointer" title="Clonar Perfil"><Copy className="w-4 h-4" /></button>
                           <button onClick={() => openEditGroup(g)} className="p-1.5 text-outline hover:text-primary rounded hover:bg-primary/10 transition-colors cursor-pointer" title="Editar"><Edit3 className="w-4 h-4" /></button>
                           <button onClick={() => toggleGroupStatus(g)} className="p-1.5 text-outline hover:text-warning rounded hover:bg-warning/10 transition-colors cursor-pointer" title="Ativar/Desativar"><Power className="w-4 h-4" /></button>
                           <button onClick={() => setConfirmDeleteGroup(g)} className="p-1.5 text-outline hover:text-error rounded hover:bg-error/10 transition-colors cursor-pointer" title="Remover"><Trash2 className="w-4 h-4" /></button>
@@ -579,131 +670,7 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
         </div>
       )}
 
-      {/* Tab: Permissões */}
-      {tab === 'permissoes' && (
-        <div className="bg-surface-white border border-border-subtle  rounded-xl p-4 shadow-sm">
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-primary">Matriz de Permissões por Tela</h2>
-            <p className="text-xs text-on-surface-variant">Clique numa célula para alternar o nível de acesso do grupo a cada tela. Use a seta ao lado do nome da tela para expandir e gerir as funcionalidades (tabs) internas individualmente.</p>
-          </div>
-          <div className="overflow-x-auto border border-border-subtle rounded-lg max-h-[600px] overflow-y-auto">
-            <table className="w-full text-left border-collapse">
-              <thead className="sticky top-0 z-10">
-                <tr className="bg-surface-container-low">
-                  <th className="px-3.5 py-3 text-left sticky left-0 bg-surface-container-low min-w-[220px]">Módulo / Tela</th>
-                  {activeGroups.map((g) => <th key={g.id} className="px-3.5 py-3 text-center min-w-[110px]">{g.nome}</th>)}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border-subtle">
-                {PERMISSIONS_CATALOG.map((mod) => (
-                  <React.Fragment key={mod.id}>
-                    <tr className="bg-surface-container-low/50">
-                      <td colSpan={activeGroups.length + 1} className="px-3.5 py-2 font-bold text-secondary uppercase text-[10px] tracking-wider">{mod.label}</td>
-                    </tr>
-                    {mod.screens.map((screen) => {
-                      const isScreenExpanded = expandedMatrixScreens.has(screen.id);
-                      return (
-                        <React.Fragment key={screen.id}>
-                          <tr className="hover:bg-surface-container-low/30 transition-colors">
-                            <td className="px-3.5 py-3 sticky left-0 bg-surface-white">
-                              <div className="flex items-center gap-1.5">
-                                {screen.tabs.length > 0 && (
-                                  <button
-                                    onClick={() => setExpandedMatrixScreens(prev => {
-                                      const ns = new Set(prev);
-                                      if (ns.has(screen.id)) ns.delete(screen.id);
-                                      else ns.add(screen.id);
-                                      return ns;
-                                    })}
-                                    className="text-outline hover:text-primary cursor-pointer shrink-0"
-                                    title={isScreenExpanded ? 'Recolher funcionalidades' : 'Expandir funcionalidades'}
-                                  >
-                                    <ChevronRight className={`w-3.5 h-3.5 transition-transform ${isScreenExpanded ? 'rotate-90' : ''}`} />
-                                  </button>
-                                )}
-                                <p className="font-bold text-primary text-xs">{screen.label}</p>
-                              </div>
-                              {screen.tabs.length > 0 && !isScreenExpanded && (
-                                <div className="mt-1 flex flex-wrap gap-1">
-                                  {screen.tabs.map((t) => (
-                                    <span key={t} className="text-[9px] text-outline bg-surface-container px-1.5 py-0.5 rounded">{t}</span>
-                                  ))}
-                                </div>
-                              )}
-                            </td>
-                            {activeGroups.map((g) => {
-                              const perm = (groupPermissions[g.id]?.[screen.id]) || 'none';
-                              const p = permLabel(perm);
-                              return (
-                                <td key={g.id} className="px-3.5 py-3 text-center">
-                                  <button
-                                    onClick={() => {
-                                      const newPerm = cyclePermission(perm);
-                                      setGroupPermissions({
-                                        ...groupPermissions,
-                                        [g.id]: { ...(groupPermissions[g.id] || {}), [screen.id]: newPerm },
-                                      });
-                                      onShowToast(`Permissão de "${g.nome}" em "${screen.label}" alterada para ${permLabel(newPerm).label}.`);
-                                    }}
-                                    className={`${p.cls} px-2 py-1 rounded-full text-[10px] font-bold cursor-pointer hover:opacity-80 transition-opacity`}
-                                    title={`Clique para alternar: ${perm === 'none' ? 'Sem acesso' : perm === 'read' ? 'Leitura' : 'Total'}`}
-                                  >
-                                    {p.label}
-                                  </button>
-                                </td>
-                              );
-                            })}
-                          </tr>
-                          {isScreenExpanded && screen.tabs.length > 0 && screen.tabs.map((tabLabel) => {
-                            const tabKey = `${screen.id}::${tabLabel}`;
-                            return (
-                              <tr key={tabKey} className="hover:bg-surface-container-low/30 transition-colors bg-surface-container-low/20">
-                                <td className="px-3.5 py-2 sticky left-0 bg-surface-white">
-                                  <div className="flex items-center gap-1.5 pl-5">
-                                    <span className="w-1 h-1 rounded-full bg-outline shrink-0" />
-                                    <p className="text-[11px] text-on-surface-variant font-medium">{tabLabel}</p>
-                                  </div>
-                                </td>
-                                {activeGroups.map((g) => {
-                                  const tabPerm = (groupPermissions[g.id]?.[tabKey]) || 'none';
-                                  const tp = permLabel(tabPerm);
-                                  return (
-                                    <td key={g.id} className="px-3.5 py-2 text-center">
-                                      <button
-                                        onClick={() => {
-                                          const newPerm = cyclePermission(tabPerm);
-                                          setGroupPermissions({
-                                            ...groupPermissions,
-                                            [g.id]: { ...(groupPermissions[g.id] || {}), [tabKey]: newPerm },
-                                          });
-                                          onShowToast(`Permissão de "${g.nome}" em "${tabLabel}" alterada para ${permLabel(newPerm).label}.`);
-                                        }}
-                                        className={`${tp.cls} px-2 py-1 rounded-full text-[10px] font-bold cursor-pointer hover:opacity-80 transition-opacity`}
-                                        title={`Clique para alternar: ${tabPerm === 'none' ? 'Sem acesso' : tabPerm === 'read' ? 'Leitura' : 'Total'}`}
-                                      >
-                                        {tp.label}
-                                      </button>
-                                    </td>
-                                  );
-                                })}
-                              </tr>
-                            );
-                          })}
-                        </React.Fragment>
-                      );
-                    })}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="flex items-center gap-4 mt-4 text-[11px] text-on-surface-variant">
-            <span className="flex items-center gap-1"><span className="bg-success/15 text-success px-2 py-0.5 rounded-full text-[10px] font-bold">Total</span> Acesso completo (leitura, escrita, eliminação)</span>
-            <span className="flex items-center gap-1"><span className="bg-info/15 text-info px-2 py-0.5 rounded-full text-[10px] font-bold">Leitura</span> Acesso de consulta apenas</span>
-            <span className="flex items-center gap-1"><span className="bg-surface-container text-outline px-2 py-0.5 rounded-full text-[10px] font-bold">—</span> Sem acesso</span>
-          </div>
-        </div>
-      )}
+
 
       {/* Tab: Auditoria & Logs */}
       {tab === 'auditoria' && (
@@ -780,13 +747,75 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
                 <option>Ativo</option><option>Inativo</option><option>Bloqueado</option>
               </select></label>
 
-              <PermissionsPanel
-                tempPermissions={tempPermissions}
-                setTempPermissions={setTempPermissions}
-                expandedPermModules={expandedPermModules}
-                setExpandedPermModules={setExpandedPermModules}
-                title="Permissões Individuais do Utilizador"
-              />
+              {/* Painel de Atribuição de Estruturas / Unidades */}
+              <div className="border border-border-subtle rounded-lg p-3 bg-surface-container-low/30 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-secondary uppercase text-[10px] tracking-wider flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-secondary" />
+                    Acesso a Estruturas / Unidades
+                  </span>
+                  <label className="flex items-center gap-1.5 cursor-pointer text-[11px] font-bold text-primary">
+                    <input
+                      type="checkbox"
+                      checked={userForm.acessoConsolidado}
+                      onChange={(e) => {
+                        const isChecked = e.target.checked;
+                        setUserForm({
+                          ...userForm,
+                          acessoConsolidado: isChecked,
+                          estruturasAutorizadas: isChecked ? structures.map(s => s.id) : [structures[0]?.id || 'str-01'],
+                        });
+                      }}
+                      className="rounded border-border-subtle text-secondary focus:ring-secondary cursor-pointer"
+                    />
+                    Acesso Consolidado (Todas as Estruturas)
+                  </label>
+                </div>
+
+                {!userForm.acessoConsolidado && (
+                  <div className="mt-2 space-y-2 pt-2 border-t border-border-subtle">
+                    <p className="text-[10px] text-on-surface-variant font-medium">Selecione as unidades autorizadas e defina a estrutura primária do utilizador:</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto drawer-scroll">
+                      {structures.map((struct) => {
+                        const isSelected = userForm.estruturasAutorizadas.includes(struct.id);
+                        const isPrimary = userForm.estruturaPrincipalId === struct.id;
+                        return (
+                          <div key={struct.id} className="flex items-center justify-between p-2 bg-surface-white border border-border-subtle rounded text-[11px]">
+                            <label className="flex items-center gap-2 cursor-pointer font-bold text-primary">
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={(e) => {
+                                  let next = [...userForm.estruturasAutorizadas];
+                                  if (e.target.checked) {
+                                    next.push(struct.id);
+                                  } else {
+                                    next = next.filter(id => id !== struct.id);
+                                  }
+                                  setUserForm({ ...userForm, estruturasAutorizadas: next });
+                                }}
+                                className="rounded border-border-subtle text-secondary focus:ring-secondary cursor-pointer"
+                              />
+                              {struct.nome}
+                            </label>
+                            {isSelected && (
+                              <button
+                                type="button"
+                                onClick={() => setUserForm({ ...userForm, estruturaPrincipalId: struct.id })}
+                                className={`text-[9px] px-1.5 py-0.5 rounded font-bold cursor-pointer transition-all ${isPrimary ? 'bg-secondary text-surface-white' : 'bg-surface-container text-outline hover:bg-surface-container-high'}`}
+                              >
+                                {isPrimary ? '★ Primária' : 'Tornar Primária'}
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+
 
               <div className="flex justify-end gap-2 border-t border-border-subtle pt-3">
                 <button type="button" onClick={() => setUserModal(false)} className="border border-border-subtle px-4 py-2 rounded-lg font-semibold cursor-pointer hover:bg-surface-container transition-all">Cancelar</button>
@@ -847,13 +876,7 @@ export const UtilizadoresPermissoesView: React.FC<Props> = ({ onShowToast }) => 
                 <option>Ativo</option><option>Inativo</option>
               </select></label>
 
-              <PermissionsPanel
-                tempPermissions={tempPermissions}
-                setTempPermissions={setTempPermissions}
-                expandedPermModules={expandedPermModules}
-                setExpandedPermModules={setExpandedPermModules}
-                title="Atribuir Permissões do Grupo"
-              />
+
 
               <div className="flex justify-end gap-2 border-t border-border-subtle pt-3">
                 <button type="button" onClick={() => setGroupModal(false)} className="border border-border-subtle px-4 py-2 rounded-lg font-semibold cursor-pointer hover:bg-surface-container transition-all">Cancelar</button>

@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
 import { ActiveView } from '../types';
 import {
-  Calendar,
-  ChevronDown,
-  Download,
+  DollarSign,
+  AlertCircle,
+  GraduationCap,
+  Users,
   TrendingUp,
-  CheckCircle2,
-  MoreVertical,
-  FileText,
-  ListFilter,
+  BarChart3,
   Receipt,
-  UserPlus,
-  Box,
-  X,
-  FileCheck
+  Landmark,
+  ArrowUpRight,
+  Award,
+  ShieldCheck,
+  Clock,
+  ChevronRight,
+  Activity,
+  FileText,
+  CheckCircle2,
+  PieChart,
+  RefreshCw,
+  PlusCircle,
+  CreditCard,
 } from 'lucide-react';
 
 interface DashboardViewProps {
@@ -22,459 +29,436 @@ interface DashboardViewProps {
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({ onSelectView, onShowToast }) => {
-  const [selectedPeriod, setSelectedPeriod] = useState<string>('Últimos 30 Dias');
-  const [isPeriodDropdownOpen, setIsPeriodDropdownOpen] = useState<boolean>(false);
-  const [activeChartMenu, setActiveChartMenu] = useState<'academic' | 'financial' | null>(null);
-  const [selectedReport, setSelectedReport] = useState<string | null>(null);
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('Ano Lectivo 2025/2026');
 
-  const periods = ['Últimos 30 Dias', 'Este Semestre', 'Ano Letivo 23/24', 'Últimos 90 Dias'];
-
-  const reports = [
-    {
-      id: 'rep-1',
-      icon: ListFilter,
-      colorClass: 'bg-transparent text-primary',
-      title: 'Lista de Estudantes por Turma',
-      description: 'Exportação completa de alunos organizados por ano letivo e turma com dados de contacto.',
-      badge: 'Gerado hoje',
-      type: 'Estudantes',
-    },
-    {
-      id: 'rep-2',
-      icon: FileText,
-      colorClass: 'bg-transparent text-secondary',
-      title: 'Pautas de Avaliação',
-      description: 'Notas finais e intercalares agregadas por disciplina e professor responsável.',
-      badge: 'Gerado há 2 dias',
-      type: 'Académico',
-    },
-    {
-      id: 'rep-3',
-      icon: Receipt,
-      colorClass: 'bg-transparent text-error',
-      title: 'Relatório de Propinas em Atraso',
-      description: 'Listagem de dívidas ativas ordenadas por tempo de atraso e valor total em dívida.',
-      badge: 'Atualização Diária',
-      type: 'Financeiro',
-    },
-    {
-      id: 'rep-4',
-      icon: Calendar,
-      colorClass: 'bg-transparent text-info',
-      title: 'Mapa de Assiduidade Mensal',
-      description: 'Registo detalhado de faltas justificadas e injustificadas para reporte à direção.',
-      badge: 'Gerado ontem',
-      type: 'Assiduidade',
-    },
-    {
-      id: 'rep-5',
-      icon: UserPlus,
-      colorClass: 'bg-transparent text-warning',
-      title: 'Estatísticas de Novos Registos',
-      description: 'Métricas de conversão de leads, origem de alunos e pipeline de novas admissões.',
-      badge: 'Gerado há 1 semana',
-      type: 'Admissões',
-    },
-    {
-      id: 'rep-6',
-      icon: Box,
-      colorClass: 'bg-transparent text-outline',
-      title: 'Inventário de Ativos Físicos',
-      description: 'Contagem e estado de conservação de equipamentos informáticos e mobiliário escolar.',
-      badge: 'Gerado há 1 mês',
-      type: 'Património',
-    },
+  // Activity Feed Data
+  const recentActivities = [
+    { id: 'act-1', tipo: 'PAGAMENTO', desc: 'Propina Set/2026 — João Baptista', hora: '21:14', color: 'bg-success/15 text-success border-success/30' },
+    { id: 'act-2', tipo: 'FACTURA', desc: 'FT-2026-0841 emitida — Ana Costa', hora: '20:58', color: 'bg-primary/15 text-primary border-primary/30' },
+    { id: 'act-3', tipo: 'DÍVIDA', desc: 'Dívida escalada — Carlos Ferreira', hora: '20:31', color: 'bg-error/15 text-error border-error/30' },
+    { id: 'act-4', tipo: 'PAGAMENTO', desc: 'Pagamento parcial — Filomena Costa', hora: '19:45', color: 'bg-success/15 text-success border-success/30' },
+    { id: 'act-5', tipo: 'BENEFÍCIO', desc: 'Bolsa aplicada — Pedro Neto (50%)', hora: '18:22', color: 'bg-info/15 text-info border-info/30' },
+    { id: 'act-6', tipo: 'CAIXA', desc: 'Fecho de caixa efectuado com sucesso', hora: '17:00', color: 'bg-secondary/15 text-secondary border-secondary/30' },
   ];
 
-  const handleExport = () => {
-    onShowToast(`Exportando relatório consolidado (${selectedPeriod}) em formato PDF/Excel...`);
-  };
-
-  const handleGenerateReport = (reportTitle: string) => {
-    setSelectedReport(reportTitle);
-    onShowToast(`Relatório "${reportTitle}" gerado e disponível para transferência.`);
-  };
-
   return (
-    <div className="mt-header-height p-4 w-full flex flex-col gap-3">
-      {/* KPI Cards (Faixa 1) */}
+    <div className="mt-header-height p-4 sm:p-5 w-full flex flex-col gap-4">
+      {/* 4 KPI Icon-Box Cards (Arquitetura Visual Anterior - h-[68px]) */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-        {/* Card 1 */}
+        {/* Card 1: RECEITA DO MÊS */}
         <div className="bg-surface-white border border-outline-variant/30 rounded-lg px-4 py-3 shadow-sm flex items-center justify-between transition-all hover:shadow-md h-[68px]">
           <div className="flex flex-col justify-center">
-            <span className="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider mb-0.5">Total Estudantes</span>
-            <span className="text-2xl font-bold text-primary leading-none">1.432</span>
+            <span className="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider mb-0.5">
+              RECEITA DO MÊS
+            </span>
+            <span className="text-xl sm:text-2xl font-bold text-primary leading-none">
+              4.280.500 Kz
+            </span>
           </div>
           <div className="flex flex-col items-end gap-1">
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-success bg-success/10 text-[10px] font-bold">
-              <span className="material-symbols-outlined text-[14px] mr-0.5">trending_up</span> +5%
+              <TrendingUp className="w-3 h-3 mr-0.5" /> +8.3%
             </span>
-            <span className="text-[9px] text-outline font-medium uppercase">vs ano anterior</span>
+            <span className="text-[9px] text-outline font-medium uppercase">este mês</span>
           </div>
         </div>
 
-        {/* Card 2 */}
+        {/* Card 2: DÍVIDA ACTIVA */}
         <div className="bg-surface-white border border-outline-variant/30 rounded-lg px-4 py-3 shadow-sm flex items-center justify-between transition-all hover:shadow-md h-[68px]">
           <div className="flex flex-col justify-center">
-            <span className="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider mb-0.5">Média Global</span>
-            <div className="text-2xl font-bold text-primary leading-none">14.5<span className="text-sm text-outline font-medium">/20</span></div>
+            <span className="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider mb-0.5">
+              DÍVIDA ACTIVA
+            </span>
+            <span className="text-xl sm:text-2xl font-bold text-primary leading-none">
+              1.142.200 Kz
+            </span>
           </div>
           <div className="flex flex-col items-end gap-1">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-success bg-success/10 text-[10px] font-bold">
-              <span className="material-symbols-outlined text-[14px] mr-0.5">trending_up</span> +0.8
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-warning bg-warning/10 text-[10px] font-bold">
+              <AlertCircle className="w-3 h-3 mr-0.5" /> 48
             </span>
-            <span className="text-[9px] text-outline font-medium uppercase">vs sem. anterior</span>
+            <span className="text-[9px] text-outline font-medium uppercase">devedores</span>
           </div>
         </div>
 
-        {/* Card 3 */}
+        {/* Card 3: MÉDIA ACADÉMICA (M02) */}
         <div className="bg-surface-white border border-outline-variant/30 rounded-lg px-4 py-3 shadow-sm flex items-center transition-all hover:shadow-md h-[68px]">
           <div className="w-full flex flex-col justify-center gap-1.5">
             <div className="flex justify-between items-end">
-              <span className="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider">Cobrança Financeira</span>
+              <span className="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider">
+                MÉDIA ACADÉMICA (M02)
+              </span>
               <div className="flex items-center gap-2">
-                <span className="text-warning font-bold text-[12px]">88%</span>
+                <span className="text-info font-bold text-[12px]">14.5<span className="text-[10px] font-normal text-outline">/20</span></span>
               </div>
             </div>
             <div className="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
-              <div className="bg-warning h-full rounded-full" style={{ width: '88%' }}></div>
+              <div className="bg-info h-full rounded-full" style={{ width: '72.5%' }}></div>
             </div>
             <div className="flex justify-between text-[9px] font-medium uppercase text-outline">
-              <span className="text-warning">Abaixo da meta (95%)</span>
+              <span className="text-info font-bold">89.2% Aproveitamento</span>
             </div>
           </div>
         </div>
 
-        {/* Card 4 */}
+        {/* Card 4: ASSIDUIDADE HOJE */}
         <div className="bg-surface-white border border-outline-variant/30 rounded-lg px-4 py-3 shadow-sm flex items-center transition-all hover:shadow-md h-[68px]">
           <div className="w-full flex flex-col justify-center gap-1.5">
             <div className="flex justify-between items-end">
-              <span className="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider">Taxa Assiduidade</span>
+              <span className="text-on-surface-variant text-[10px] uppercase font-bold tracking-wider">
+                ASSIDUIDADE HOJE
+              </span>
               <div className="flex items-center gap-2">
-                <span className="text-success font-bold text-[12px]">94.2%</span>
+                <span className="text-success font-bold text-[12px]">96.5%</span>
               </div>
             </div>
             <div className="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
-              <div className="bg-success h-full rounded-full" style={{ width: '94.2%' }}></div>
+              <div className="bg-success h-full rounded-full" style={{ width: '96.5%' }}></div>
             </div>
             <div className="flex justify-between text-[9px] font-medium uppercase text-outline">
-              <span className="text-success flex items-center gap-0.5"><span className="material-symbols-outlined text-[10px]">check_circle</span>Estável</span>
+              <span className="text-success flex items-center gap-0.5 font-bold">
+                <CheckCircle2 className="w-3 h-3 text-success inline" /> 3 pendentes
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Filters & Actions Bar (Faixa 2) */}
-      <div className="bg-surface-white border border-border-subtle rounded-xl p-3 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-primary uppercase tracking-wide">Painel de Controlo</span>
-        </div>
-        <div className="flex items-center gap-2 relative">
-          {/* Period Dropdown Selector */}
-          <div className="relative">
+      {/* Main Grid: Gráfico de Receitas vs Despesas + Card do Índice de Arrecadação */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Left Column (2/3 width): Receitas vs Despesas — ÚLTIMOS 6 MESES */}
+        <div className="lg:col-span-2 bg-surface-white border border-border-subtle rounded-xl p-5 shadow-2xs flex flex-col justify-between">
+          <div>
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <div>
+                <h3 className="font-bold text-base text-primary flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-secondary stroke-[1.75]" />
+                  Receitas vs Despesas — ÚLTIMOS 6 MESES
+                </h3>
+                <p className="text-xs text-outline font-medium">Valores em milhares de Kz</p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
+                  <span className="w-3 h-3 rounded bg-primary inline-block" />
+                  Receita
+                </div>
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-secondary">
+                  <span className="w-3 h-3 rounded bg-secondary inline-block" />
+                  Despesa
+                </div>
+              </div>
+            </div>
+
+            {/* Custom Interactive CSS Bar Chart (6 Meses: Abr, Mai, Jun, Jul, Ago, Set) */}
+            <div className="h-56 relative flex items-end justify-between pt-6 pb-6 px-4 border-b border-l border-border-subtle/80 gap-2">
+              {/* Y-Axis Grid Lines */}
+              <div className="absolute inset-x-0 top-0 border-t border-dashed border-border-subtle/50 text-[9px] text-outline font-mono pl-1">
+                5.000Kz
+              </div>
+              <div className="absolute inset-x-0 top-1/4 border-t border-dashed border-border-subtle/50 text-[9px] text-outline font-mono pl-1">
+                3.750Kz
+              </div>
+              <div className="absolute inset-x-0 top-2/4 border-t border-dashed border-border-subtle/50 text-[9px] text-outline font-mono pl-1">
+                2.500Kz
+              </div>
+              <div className="absolute inset-x-0 top-3/4 border-t border-dashed border-border-subtle/50 text-[9px] text-outline font-mono pl-1">
+                1.250Kz
+              </div>
+
+              {/* Month Bars */}
+              {[
+                { mes: 'Abr', receita: '3.800K', despesa: '2.900K', hRec: '76%', hDesp: '58%' },
+                { mes: 'Mai', receita: '4.100K', despesa: '3.100K', hRec: '82%', hDesp: '62%' },
+                { mes: 'Jun', receita: '3.950K', despesa: '3.000K', hRec: '79%', hDesp: '60%' },
+                { mes: 'Jul', receita: '4.500K', despesa: '3.200K', hRec: '90%', hDesp: '64%' },
+                { mes: 'Ago', receita: '4.150K', despesa: '3.050K', hRec: '83%', hDesp: '61%' },
+                { mes: 'Set', receita: '4.280K', despesa: '3.120K', hRec: '85.6%', hDesp: '62.4%' },
+              ].map((item) => (
+                <div key={item.mes} className="flex-1 flex flex-col items-center h-full justify-end group z-10">
+                  <div className="flex items-end gap-1.5 h-full w-full justify-center">
+                    {/* Receita Bar (bg-primary / Dark Navy) */}
+                    <div
+                      className="w-5 sm:w-7 bg-primary rounded-t-md transition-all group-hover:brightness-125 shadow-2xs relative"
+                      style={{ height: item.hRec }}
+                    >
+                      <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-surface-white text-[10px] py-0.5 px-1.5 rounded shadow pointer-events-none whitespace-nowrap z-20 font-bold">
+                        Rec: {item.receita}
+                      </div>
+                    </div>
+                    {/* Despesa Bar (bg-secondary / Terrakotta Brown) */}
+                    <div
+                      className="w-5 sm:w-7 bg-secondary rounded-t-md transition-all group-hover:brightness-110 shadow-2xs relative"
+                      style={{ height: item.hDesp }}
+                    >
+                      <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-secondary text-surface-white text-[10px] py-0.5 px-1.5 rounded shadow pointer-events-none whitespace-nowrap z-20 font-bold">
+                        Desp: {item.despesa}
+                      </div>
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-bold text-primary mt-2">{item.mes}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap justify-between items-center pt-3 mt-2 border-t border-border-subtle">
+            <span className="text-xs text-outline font-medium flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              Ano lectivo 2025/2026 · Actualizado hoje
+            </span>
             <button
-              onClick={() => setIsPeriodDropdownOpen(!isPeriodDropdownOpen)}
-              className="flex items-center border border-border-subtle bg-surface-white rounded-md h-7 px-2 gap-1 text-on-surface shadow-sm cursor-pointer hover:bg-surface-container-low transition-colors"
+              onClick={() => {
+                onSelectView('financeiro');
+                onShowToast('Redirecionando para Relatórios Financeiros...');
+              }}
+              className="text-xs font-bold text-secondary hover:text-secondary/80 flex items-center gap-1 cursor-pointer transition-colors"
             >
-              <span className="material-symbols-outlined text-outline" style={{ fontSize: '14px' }}>
-                calendar_month
+              Ver Relatórios <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Right Column (1/3 width): Card do Índice de Arrecadação */}
+        <div className="bg-surface-white border border-border-subtle rounded-xl p-5 shadow-2xs flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-start mb-3">
+              <div>
+                <h3 className="font-bold text-base text-primary flex items-center gap-2">
+                  <PieChart className="w-5 h-5 text-secondary stroke-[1.75]" />
+                  Índice de Arrecadação
+                </h3>
+                <p className="text-xs text-outline font-medium">Balanço do Ciclo Letivo 2025/2026</p>
+              </div>
+              <span className="bg-success/10 text-success text-[10px] font-bold px-2 py-0.5 rounded-full border border-success/20">
+                Meta 90% SLA
               </span>
-              <span className="font-label-sm text-[10px] font-medium">{selectedPeriod}</span>
-              <span className="material-symbols-outlined text-outline" style={{ fontSize: '14px' }}>
-                arrow_drop_down
-              </span>
+            </div>
+
+            {/* Gauge Conic Donut Visual */}
+            <div className="flex flex-col items-center justify-center my-3">
+              <div
+                className="w-32 h-32 rounded-full flex items-center justify-center shadow-inner relative transition-transform hover:scale-105 cursor-pointer"
+                style={{ background: 'conic-gradient(#041939 0% 88%, #e5e7eb 88% 100%)' }}
+                onClick={() => onSelectView('financeiro')}
+              >
+                <div className="w-24 h-24 bg-surface-white rounded-full flex flex-col items-center justify-center shadow-xs">
+                  <span className="text-[9px] uppercase font-bold text-outline tracking-wider">RECEBIDO</span>
+                  <span className="text-2xl font-extrabold text-primary leading-none">88%</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Metrics List */}
+            <div className="space-y-2 text-xs border-t border-border-subtle pt-3">
+              <div className="flex justify-between items-center">
+                <span className="text-outline font-medium">Valor Arrecadado:</span>
+                <span className="font-bold text-primary">420.000.000 Kz</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-outline font-medium">Dívida Activa (12%):</span>
+                <span className="font-bold text-error">57.500.000 Kz</span>
+              </div>
+              <div className="flex justify-between items-center pt-1 border-t border-border-subtle/50 font-bold">
+                <span className="text-primary">Total Previsto:</span>
+                <span className="text-secondary text-sm">477.500.000 Kz</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-3 mt-3 border-t border-border-subtle">
+            <span className="text-[11px] text-outline font-medium flex items-center gap-1">
+              <RefreshCw className="w-3 h-3 text-secondary animate-spin" style={{ animationDuration: '6s' }} />
+              Atualização em tempo real
+            </span>
+            <button
+              onClick={() => {
+                onSelectView('financeiro');
+                onShowToast('Abrindo Balanço M05...');
+              }}
+              className="px-3 py-1.5 bg-secondary/10 hover:bg-secondary hover:text-surface-white text-secondary text-xs font-bold rounded-lg transition-colors cursor-pointer"
+            >
+              Ver Balanço M05
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Grid: Ações Rápidas & Atalhos + Actividade Recente */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Left Column (2/3 width): Ações Rápidas & Atalhos */}
+        <div className="lg:col-span-2 bg-surface-white border border-border-subtle rounded-xl p-5 shadow-2xs">
+          <div className="mb-4">
+            <h3 className="font-bold text-base text-primary flex items-center gap-2">
+              <Activity className="w-5 h-5 text-secondary stroke-[1.75]" />
+              Ações Rápidas & Atalhos
+            </h3>
+            <p className="text-xs text-outline font-medium">Operações frequentes da instituição</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <button
+              onClick={() => {
+                onSelectView('financeiro');
+                onShowToast('Abrindo formulário de Nova Cobrança / Fatura...');
+              }}
+              className="bg-surface-container-low/60 hover:bg-secondary/10 border border-border-subtle hover:border-secondary/40 p-3.5 rounded-xl text-left transition-all flex items-center gap-3 cursor-pointer group"
+            >
+              <div className="w-9 h-9 rounded-lg bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-surface-white flex items-center justify-center transition-colors">
+                <Receipt className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-bold text-xs text-primary group-hover:text-secondary transition-colors">
+                  Nova Cobrança / Factura
+                </p>
+                <p className="text-[10px] text-outline">Emitir recibos e faturas AGT</p>
+              </div>
             </button>
 
-            {isPeriodDropdownOpen && (
-              <div className="absolute right-0 top-8 bg-surface-white border border-border-subtle rounded-md shadow-lg py-1 z-30 w-44">
-                {periods.map((p) => (
-                  <button
-                    key={p}
-                    onClick={() => {
-                      setSelectedPeriod(p);
-                      setIsPeriodDropdownOpen(false);
-                      onShowToast(`Filtro alterado para: ${p}`);
-                    }}
-                    className={`w-full text-left px-3 py-1.5 text-xs font-medium hover:bg-surface-container-low transition-colors ${
-                      selectedPeriod === p ? 'text-secondary font-bold bg-surface-container-low/50' : 'text-primary'
-                    }`}
-                  >
-                    {p}
-                  </button>
-                ))}
+            <button
+              onClick={() => {
+                onSelectView('financeiro');
+                onShowToast('Acedendo à Gestão de Caixas...');
+              }}
+              className="bg-surface-container-low/60 hover:bg-secondary/10 border border-border-subtle hover:border-secondary/40 p-3.5 rounded-xl text-left transition-all flex items-center gap-3 cursor-pointer group"
+            >
+              <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-surface-white flex items-center justify-center transition-colors">
+                <Landmark className="w-5 h-5" />
               </div>
-            )}
+              <div>
+                <p className="font-bold text-xs text-primary group-hover:text-secondary transition-colors">
+                  Abrir / Ver Caixa
+                </p>
+                <p className="text-[10px] text-outline">Fecho diário e fluxo financeiro</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                onSelectView('financeiro');
+                onShowToast('Abrindo módulo de Conciliação Bancária...');
+              }}
+              className="bg-surface-container-low/60 hover:bg-secondary/10 border border-border-subtle hover:border-secondary/40 p-3.5 rounded-xl text-left transition-all flex items-center gap-3 cursor-pointer group"
+            >
+              <div className="w-9 h-9 rounded-lg bg-info/10 text-info group-hover:bg-info group-hover:text-surface-white flex items-center justify-center transition-colors">
+                <ArrowUpRight className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-bold text-xs text-primary group-hover:text-secondary transition-colors">
+                  Conciliação Bancária
+                </p>
+                <p className="text-[10px] text-outline">Validar extratos EMIS/Multicaixa</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                onSelectView('financeiro');
+                onShowToast('Formulário de atribuição de bolsas ativado.');
+              }}
+              className="bg-surface-container-low/60 hover:bg-secondary/10 border border-border-subtle hover:border-secondary/40 p-3.5 rounded-xl text-left transition-all flex items-center gap-3 cursor-pointer group"
+            >
+              <div className="w-9 h-9 rounded-lg bg-warning/10 text-warning group-hover:bg-warning group-hover:text-surface-white flex items-center justify-center transition-colors">
+                <Award className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-bold text-xs text-primary group-hover:text-secondary transition-colors">
+                  Registar Benefício / Bolsa
+                </p>
+                <p className="text-[10px] text-outline">Descontos e bolsas sociais</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                onSelectView('academico');
+                onShowToast('Navegando para Gestão Académica (M02)...');
+              }}
+              className="bg-surface-container-low/60 hover:bg-secondary/10 border border-border-subtle hover:border-secondary/40 p-3.5 rounded-xl text-left transition-all flex items-center gap-3 cursor-pointer group"
+            >
+              <div className="w-9 h-9 rounded-lg bg-success/10 text-success group-hover:bg-success group-hover:text-surface-white flex items-center justify-center transition-colors">
+                <GraduationCap className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-bold text-xs text-primary group-hover:text-secondary transition-colors">
+                  Aceder à Gestão Académica (M02)
+                </p>
+                <p className="text-[10px] text-outline">Pautas, matrículas e pautas</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                onSelectView('utilizadores_permissoes');
+                onShowToast('Navegando para Governação & Auditoria (M09)...');
+              }}
+              className="bg-surface-container-low/60 hover:bg-secondary/10 border border-border-subtle hover:border-secondary/40 p-3.5 rounded-xl text-left transition-all flex items-center gap-3 cursor-pointer group"
+            >
+              <div className="w-9 h-9 rounded-lg bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-surface-white flex items-center justify-center transition-colors">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-bold text-xs text-primary group-hover:text-secondary transition-colors">
+                  Governação & Auditoria (M09)
+                </p>
+                <p className="text-[10px] text-outline">Matriz RBAC e audit logs</p>
+              </div>
+            </button>
           </div>
-
-          <button
-            onClick={handleExport}
-            className="flex items-center bg-surface-white border border-border-subtle hover:bg-surface-container-low text-on-surface font-semibold text-[10px] h-7 px-2 rounded-md transition-colors gap-1 shadow-sm cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-[14px]">download</span>
-            Exportar
-          </button>
         </div>
-      </div>
 
-      {/* Main Analytics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        {/* Chart 1: Academic Performance */}
-        <div className="col-span-2 bg-surface-white border border-outline-variant/30 rounded-lg shadow-sm flex flex-col p-4 h-[300px] relative">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-title-lg text-[14px] text-primary font-bold">Desempenho Académico por Ciclo</h3>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1">
-                <div className="w-2.5 h-2.5 bg-primary rounded-sm"></div>
-                <span className="font-label-sm text-[9px] text-outline uppercase font-semibold">Ensino Básico</span>
+        {/* Right Column (1/3 width): Actividade Recente */}
+        <div className="bg-surface-white border border-border-subtle rounded-xl p-5 shadow-2xs flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-start mb-3">
+              <div>
+                <h3 className="font-bold text-base text-primary flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-secondary stroke-[1.75]" />
+                  Actividade Recente
+                </h3>
+                <p className="text-xs text-outline font-medium">Eventos em tempo real nos módulos</p>
               </div>
-              <div className="flex items-center gap-1">
-                <div className="w-2.5 h-2.5 bg-secondary rounded-sm"></div>
-                <span className="font-label-sm text-[9px] text-outline uppercase font-semibold">Secundário</span>
-              </div>
-              <div className="relative">
-                <button
-                  onClick={() => setActiveChartMenu(activeChartMenu === 'academic' ? null : 'academic')}
-                  className="p-0.5 text-outline hover:text-primary transition-colors rounded cursor-pointer"
+              <span className="bg-surface-container text-primary font-bold text-[9px] px-2 py-0.5 rounded border border-border-subtle uppercase">
+                HOJE - 11/09/2026
+              </span>
+            </div>
+
+            {/* Event List */}
+            <div className="space-y-2">
+              {recentActivities.map((act) => (
+                <div
+                  key={act.id}
+                  className="flex items-center justify-between p-2 rounded-lg bg-surface-container-low/50 hover:bg-surface-container-low transition-colors border border-border-subtle/50 text-xs"
                 >
-                  <span className="material-symbols-outlined text-[16px]">more_vert</span>
-                </button>
-                {activeChartMenu === 'academic' && (
-                  <div className="absolute right-0 top-6 bg-surface-white border border-border-subtle rounded-md shadow-lg py-1 z-30 w-48 text-xs">
-                    <button
-                      onClick={() => {
-                        setActiveChartMenu(null);
-                        onShowToast('Dados exportados para CSV com sucesso!');
-                      }}
-                      className="w-full text-left px-3 py-1.5 hover:bg-surface-container-low"
-                    >
-                      Exportar dados em CSV
-                    </button>
-                    <button
-                      onClick={() => {
-                        setActiveChartMenu(null);
-                        onShowToast('Ajustando escala para valores absolutos...');
-                      }}
-                      className="w-full text-left px-3 py-1.5 hover:bg-surface-container-low"
-                    >
-                      Alternar para Percentagem
-                    </button>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase border ${act.color}`}>
+                      {act.tipo}
+                    </span>
+                    <span className="font-semibold text-primary text-[11px] truncate">{act.desc}</span>
                   </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Simplified Bar Chart Representation */}
-          <div className="flex-1 relative flex items-end justify-around pb-5 pt-2 border-l border-b border-border-subtle ml-4">
-            {/* Y-axis labels */}
-            <div className="absolute left-[-20px] top-0 bottom-5 flex flex-col justify-between font-label-sm text-[9px] text-outline">
-              <span className="">20</span><span className="">15</span><span className="">10</span><span className="">5</span><span className="">0</span>
-            </div>
-            {/* Grid lines */}
-            <div className="absolute inset-0 bottom-5 flex flex-col justify-between z-0 ml-1">
-              <div className="w-full border-t border-border-subtle/50"></div>
-              <div className="w-full border-t border-border-subtle/50"></div>
-              <div className="w-full border-t border-border-subtle/50"></div>
-              <div className="w-full border-t border-border-subtle/50"></div>
-              <div></div>
-            </div>
-            {/* Bars */}
-            <div className="z-10 flex gap-1 items-end h-[80%] relative group cursor-pointer">
-              <div className="w-6 sm:w-8 bg-primary h-[70%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
-              <div className="w-6 sm:w-8 bg-secondary h-[65%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
-              <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant w-max font-medium">Português</div>
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-surface-white text-[10px] py-1 px-2 rounded shadow whitespace-nowrap pointer-events-none z-20">
-                Básico: 14.0 | Secundário: 13.0
-              </div>
-            </div>
-            <div className="z-10 flex gap-1 items-end h-[80%] relative group cursor-pointer">
-              <div className="w-6 sm:w-8 bg-primary h-[60%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
-              <div className="w-6 sm:w-8 bg-secondary h-[55%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
-              <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant w-max font-medium">Matemática</div>
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-surface-white text-[10px] py-1 px-2 rounded shadow whitespace-nowrap pointer-events-none z-20">
-                Básico: 12.0 | Secundário: 11.0
-              </div>
-            </div>
-            <div className="z-10 flex gap-1 items-end h-[80%] relative group cursor-pointer">
-              <div className="w-6 sm:w-8 bg-primary h-[85%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
-              <div className="w-6 sm:w-8 bg-secondary h-[75%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
-              <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant w-max font-medium">Ciências</div>
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-surface-white text-[10px] py-1 px-2 rounded shadow whitespace-nowrap pointer-events-none z-20">
-                Básico: 17.0 | Secundário: 15.0
-              </div>
-            </div>
-            <div className="z-10 flex gap-1 items-end h-[80%] relative group cursor-pointer">
-              <div className="w-6 sm:w-8 bg-primary h-[75%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
-              <div className="w-6 sm:w-8 bg-secondary h-[80%] rounded-t-sm hover:opacity-90 transition-opacity"></div>
-              <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-on-surface-variant w-max font-medium">Inglês</div>
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-surface-white text-[10px] py-1 px-2 rounded shadow whitespace-nowrap pointer-events-none z-20">
-                Básico: 15.0 | Secundário: 16.0
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Chart 2: Financial */}
-        <div className="col-span-1 bg-surface-white border border-outline-variant/30 rounded-lg shadow-sm flex flex-col p-4 h-[300px] relative">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-title-lg text-[14px] text-primary font-bold">Receita vs Dívida</h3>
-            <div className="relative">
-              <button
-                onClick={() => setActiveChartMenu(activeChartMenu === 'financial' ? null : 'financial')}
-                className="p-0.5 text-outline hover:text-primary transition-colors rounded cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-[16px]">more_vert</span>
-              </button>
-              {activeChartMenu === 'financial' && (
-                <div className="absolute right-0 top-6 bg-surface-white border border-border-subtle rounded-md shadow-lg py-1 z-30 w-48 text-xs">
-                  <button
-                    onClick={() => {
-                      setActiveChartMenu(null);
-                      onSelectView('financeiro');
-                    }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-surface-container-low"
-                  >
-                    Ver detalhes financeiros
-                  </button>
-                  <button
-                    onClick={() => {
-                      setActiveChartMenu(null);
-                      onShowToast('A emitir avisos de cobrança pendentes...');
-                    }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-surface-container-low text-warning font-semibold"
-                  >
-                    Emitir avisos de cobrança
-                  </button>
+                  <span className="text-[10px] font-mono text-outline shrink-0 font-bold">{act.hora}</span>
                 </div>
-              )}
+              ))}
             </div>
           </div>
-          <div className="flex-1 flex flex-col items-center justify-center">
-            {/* CSS Conic Gradient Donut with 12px rounded corners as specified */}
-            <div
-              className="relative w-32 h-32 flex items-center justify-center mb-4 rounded-12px chart-donut-box transition-transform hover:scale-105 cursor-pointer shadow-sm"
-              style={{ background: 'conic-gradient(#041939 0% 88%, #e5e7eb 88% 100%)', borderRadius: '12px' }}
-              onClick={() => onSelectView('financeiro')}
-              title="Clique para abrir detalhes financeiros"
+
+          <div className="flex items-center justify-between pt-3 mt-3 border-t border-border-subtle">
+            <span className="text-[10px] text-outline font-medium flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              Sincronização em tempo real ativa
+            </span>
+            <button
+              onClick={() => {
+                onSelectView('utilizadores_permissoes');
+                onShowToast('Carregando registos completos de auditoria...');
+              }}
+              className="text-xs font-bold text-secondary hover:text-secondary/80 flex items-center gap-1 cursor-pointer transition-colors"
             >
-              {/* Inner White Box */}
-              <div 
-                className="w-24 h-24 bg-surface-white rounded-12px chart-donut-box flex flex-col items-center justify-center shadow-inner"
-                style={{ borderRadius: '12px' }}
-              >
-                <span className="font-label-sm text-[9px] text-outline uppercase font-semibold mb-0.5 tracking-wider">
-                  RECEBIDO
-                </span>
-                <span className="font-headline-sm text-2xl text-primary font-bold">
-                  88%
-                </span>
-              </div>
-            </div>
-            <div className="w-full flex justify-between px-2 border-t border-border-subtle pt-3">
-              <div className="flex flex-col">
-                <span className="font-label-sm text-[9px] text-outline font-bold uppercase mb-0.5 tracking-wider">RECEITA</span>
-                <span className="font-body-md text-[13px] text-primary font-bold">€1.2M</span>
-              </div>
-              <div className="flex flex-col items-end">
-                <span className="font-label-sm text-[9px] text-warning font-bold uppercase mb-0.5 tracking-wider leading-tight text-right">EM<br />ATRASO</span>
-                <span className="font-body-md text-[13px] text-primary font-bold">€145K</span>
-              </div>
-            </div>
+              Ver Log Completo <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
-
-      {/* Detailed Reports Grid */}
-      <div>
-        <div className="flex justify-between items-center mb-3 mt-2">
-          <h2 className="font-title-lg text-[14px] text-primary font-bold">Relatórios Detalhados</h2>
-          <button
-            onClick={() => onShowToast('A carregar catálogo completo com +15 relatórios institucionais...')}
-            className="font-label-md text-xs text-secondary font-semibold hover:underline cursor-pointer"
-          >
-            Ver todos
-          </button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {reports.map((report) => (
-            <div
-              key={report.id}
-              onClick={() => handleGenerateReport(report.title)}
-              className="bg-surface-white border border-outline-variant/30 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer group flex items-start gap-3"
-            >
-              <div className={`w-8 h-8 rounded flex items-center justify-center shrink-0 transition-colors bg-transparent ${report.colorClass}`}>
-                <report.icon className="w-5 h-5 stroke-[1.75]" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-label-md text-[12px] font-semibold text-primary mb-0.5 truncate">{report.title}</h4>
-                <p className="font-body-md text-[11px] text-on-surface-variant line-clamp-2 mb-1.5 leading-tight">{report.description}</p>
-                <span className="inline-block bg-surface-container-low font-label-sm text-[9px] font-medium px-1.5 py-0.5 rounded text-outline uppercase">{report.badge}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Report Modal / Preview Banner when selected */}
-      {selectedReport && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-surface-white rounded-xl shadow-2xl border border-border-subtle p-6 max-w-lg w-full">
-            <div className="flex justify-between items-center border-b border-border-subtle pb-3 mb-4">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-secondary">description</span>
-                <h3 className="font-bold text-primary text-sm">{selectedReport}</h3>
-              </div>
-              <button
-                onClick={() => setSelectedReport(null)}
-                className="text-outline hover:text-primary p-1 rounded hover:bg-surface-container"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <p className="text-xs text-on-surface-variant mb-4">
-              O relatório foi processado com sucesso para o período <strong>{selectedPeriod}</strong> com base nos dados mais recentes da Vendaia School®.
-            </p>
-
-            <div className="bg-surface-container-low p-3 rounded-lg text-xs space-y-1 mb-4 border border-border-subtle">
-              <div className="flex justify-between text-[11px]">
-                <span className="text-outline">Estado da Geração:</span>
-                <span className="font-bold text-success flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[14px]">check_circle</span> Pronto para download
-                </span>
-              </div>
-              <div className="flex justify-between text-[11px]">
-                <span className="text-outline">Formato do Ficheiro:</span>
-                <span className="font-bold text-primary">PDF / Excel (.xlsx)</span>
-              </div>
-              <div className="flex justify-between text-[11px]">
-                <span className="text-outline">Registos Incluídos:</span>
-                <span className="font-bold text-primary">1.432 Alunos</span>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setSelectedReport(null)}
-                className="border border-border-subtle px-4 py-2 rounded-lg text-xs font-semibold hover:bg-surface-container"
-              >
-                Fechar
-              </button>
-              <button
-                onClick={() => {
-                  onShowToast(`Descarregando ${selectedReport}...`);
-                  setSelectedReport(null);
-                }}
-                className="bg-secondary text-surface-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-opacity-90 flex items-center gap-1.5 shadow-sm"
-              >
-                <span className="material-symbols-outlined text-[16px]">download</span>
-                Descarregar Relatório
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
-

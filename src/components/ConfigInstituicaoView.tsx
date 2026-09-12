@@ -1,9 +1,36 @@
 import React, { useState } from 'react';
 import { ActiveView } from '../types';
-import { Building2, FileText, Globe, Lock, Database, Plug, Code as Code2, Settings, Save, Upload, Download, RefreshCw, Image as ImageIcon, CircleCheck as CheckCircle2, TriangleAlert as AlertTriangle, Clock, X, Eye, Trash2, Plus, Key, Shield, HardDrive } from 'lucide-react';
+import {
+  Building2,
+  FileText,
+  Globe,
+  Lock,
+  Database,
+  Plug,
+  Code as Code2,
+  Settings,
+  Save,
+  Upload,
+  Download,
+  RefreshCw,
+  CircleCheck as CheckCircle2,
+  TriangleAlert as AlertTriangle,
+  X,
+  Eye,
+  Trash2,
+  Plus,
+  Key,
+  Shield,
+  Check,
+  Server,
+  KeyRound,
+  HardDrive,
+  Copy,
+} from 'lucide-react';
+import { useAccess } from '../context/AccessContext';
 
 interface Props {
-  onSelectView: (view: ActiveView) => void;
+  onSelectView?: (view: ActiveView) => void;
   onShowToast: (msg: string) => void;
 }
 
@@ -44,72 +71,101 @@ const initialBackups: BackupItem[] = [
   { id: 'b6', nome: 'backup_2026-08-06_03h00', data: '06 Ago 2026, 03:00', tamanho: '240 MB', tipo: 'Automático', estado: 'Concluído' },
 ];
 
-const integrations: IntegrationItem[] = [
-  { id: 'i1', nome: 'Supabase', descricao: 'Base de dados e autenticação', categoria: 'Infraestrutura', estado: 'Conectado' },
-  { id: 'i2', nome: 'Stripe', descricao: 'Processamento de pagamentos online', categoria: 'Financeiro', estado: 'Conectado' },
-  { id: 'i3', nome: 'Twilio SMS', descricao: 'Envio de SMS e notificações', categoria: 'Comunicação', estado: 'Conectado' },
-  { id: 'i4', nome: 'Mailchimp', descricao: 'Newsletter e email marketing', categoria: 'Comunicação', estado: 'Conectado' },
-  { id: 'i5', nome: 'Google Analytics', descricao: 'Analytics do portal web', categoria: 'Web', estado: 'Conectado' },
-  { id: 'i6', nome: 'Multicaixa Express', descricao: 'Pagamentos via Multicaixa Express', categoria: 'Financeiro', estado: 'Desconectado' },
-  { id: 'i7', nome: 'Microsoft Graph', descricao: 'Integração com Microsoft 365', categoria: 'Produtividade', estado: 'Desconectado' },
-  { id: 'i8', nome: 'WhatsApp Business API', descricao: 'Envio de mensagens via WhatsApp', categoria: 'Comunicação', estado: 'Erro' },
+const initialIntegrations: IntegrationItem[] = [
+  { id: 'i1', nome: 'Supabase Postgres & Auth', descricao: 'Base de dados relacional e motor de autenticação RLS', categoria: 'Infraestrutura', estado: 'Conectado' },
+  { id: 'i2', nome: 'Stripe Payments', descricao: 'Processamento de pagamentos globais e cartões', categoria: 'Financeiro', estado: 'Conectado' },
+  { id: 'i3', nome: 'EMIS Multicaixa Express', descricao: 'Gateway de pagamentos Angolano por referência', categoria: 'Financeiro', estado: 'Conectado' },
+  { id: 'i4', nome: 'Twilio SMS Gateway', descricao: 'Envio de SMS e notificações transacionais', categoria: 'Comunicação', estado: 'Conectado' },
+  { id: 'i5', nome: 'Mailchimp Email Engine', descricao: 'Envio de circulares e newsletters institucionais', categoria: 'Comunicação', estado: 'Conectado' },
+  { id: 'i6', nome: 'WhatsApp Business API', descricao: 'Envio de avisos e boletins via WhatsApp', categoria: 'Comunicação', estado: 'Conectado' },
+  { id: 'i7', nome: 'Microsoft Graph (M365)', descricao: 'Sincronização de calendários e Single Sign-On (SSO)', categoria: 'Produtividade', estado: 'Desconectado' },
+  { id: 'i8', nome: 'Google Workspace SSO', descricao: 'Autenticação unificada de professores e alunos', categoria: 'Produtividade', estado: 'Erro' },
 ];
 
 const initialApiKeys: ApiKeyItem[] = [
   { id: 'k1', nome: 'Portal Web (Produção)', chave: 'vs_prod_••••••••••••3f8a', criada: '15 Jan 2025', ultimaUsada: '10 Ago 2026', estado: 'Ativa' },
-  { id: 'k2', nome: 'App Mobile', chave: 'vs_mob_••••••••••••7c2d', criada: '20 Fev 2025', ultimaUsada: '09 Ago 2026', estado: 'Ativa' },
+  { id: 'k2', nome: 'App Mobile Estudante', chave: 'vs_mob_••••••••••••7c2d', criada: '20 Fev 2025', ultimaUsada: '09 Ago 2026', estado: 'Ativa' },
   { id: 'k3', nome: 'Integração Stripe', chave: 'vs_int_••••••••••••9e1f', criada: '05 Mar 2025', ultimaUsada: '10 Ago 2026', estado: 'Ativa' },
-  { id: 'k4', nome: 'Webhook SMS', chave: 'vs_wh_••••••••••••4b6a', criada: '10 Mar 2025', ultimaUsada: '01 Ago 2026', estado: 'Inativa' },
+  { id: 'k4', nome: 'Webhook SMS Twilio', chave: 'vs_wh_••••••••••••4b6a', criada: '10 Mar 2025', ultimaUsada: '01 Ago 2026', estado: 'Inativa' },
 ];
 
 const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
   { key: 'dados', label: 'Dados Institucionais', icon: <Building2 className="w-4 h-4" /> },
   { key: 'templates', label: 'Templates de Documentos', icon: <FileText className="w-4 h-4" /> },
-  { key: 'idioma', label: 'Idioma', icon: <Globe className="w-4 h-4" /> },
-  { key: 'seguranca', label: 'Segurança', icon: <Lock className="w-4 h-4" /> },
-  { key: 'backups', label: 'Backups', icon: <Database className="w-4 h-4" /> },
+  { key: 'idioma', label: 'Idioma & Localização', icon: <Globe className="w-4 h-4" /> },
+  { key: 'seguranca', label: 'Segurança & RLS', icon: <Lock className="w-4 h-4" /> },
+  { key: 'backups', label: 'Backups do Sistema', icon: <Database className="w-4 h-4" /> },
   { key: 'integracoes', label: 'Integrações', icon: <Plug className="w-4 h-4" /> },
-  { key: 'apis', label: 'APIs', icon: <Code2 className="w-4 h-4" /> },
+  { key: 'apis', label: 'APIs & Webhooks', icon: <Code2 className="w-4 h-4" /> },
   { key: 'geral', label: 'Configurações Gerais', icon: <Settings className="w-4 h-4" /> },
 ];
 
 const estadoChip = (estado: string): string => {
   const map: Record<string, string> = {
-    'Concluído': 'bg-success/15 text-success',
-    'Em curso': 'bg-warning/15 text-warning',
-    'Falhou': 'bg-error/15 text-error',
-    'Conectado': 'bg-success/15 text-success',
-    'Desconectado': 'bg-surface-container text-outline',
-    'Erro': 'bg-error/15 text-error',
-    'Ativa': 'bg-success/15 text-success',
-    'Inativa': 'bg-warning/15 text-warning',
+    'Concluído': 'bg-success/15 text-success border border-success/20',
+    'Em curso': 'bg-warning/15 text-warning border border-warning/20',
+    'Falhou': 'bg-error/15 text-error border border-error/20',
+    'Conectado': 'bg-success/15 text-success border border-success/20',
+    'Desconectado': 'bg-surface-container text-outline border border-border-subtle',
+    'Erro': 'bg-error/15 text-error border border-error/20',
+    'Ativa': 'bg-success/15 text-success border border-success/20',
+    'Inativa': 'bg-warning/15 text-warning border border-warning/20',
   };
   return map[estado] || 'bg-surface-container text-outline';
 };
 
 export const ConfigInstituicaoView: React.FC<Props> = ({ onShowToast }) => {
+  const { structures } = useAccess();
   const [tab, setTab] = useState<Tab>('dados');
+  const [selectedStructureId, setSelectedStructureId] = useState<string>('global');
+
+  // Interactive Form State for Institutional Data
+  const [dadosForm, setDadosForm] = useState({
+    nome: 'Vendaia School®',
+    designacao: 'Instituto Vendaia de Ensino Secundário',
+    nif: '5412 0098 3',
+    telefone: '+244 923 000 000',
+    email: 'geral@vendaia.edu',
+    website: 'www.vendaia.edu',
+    morada: 'Av. Comandante Valódia, nº 120, Luanda, Angola',
+    anoFundacao: '1998',
+    diretorGeral: 'Dra. Sara Silva',
+  });
+
+  // State Lists
   const [backups, setBackups] = useState<BackupItem[]>(initialBackups);
   const [apiKeys, setApiKeys] = useState<ApiKeyItem[]>(initialApiKeys);
+  const [integrations] = useState<IntegrationItem[]>(initialIntegrations);
+
+  // Modals State
   const [apiModal, setApiModal] = useState(false);
   const [confirmDeleteApi, setConfirmDeleteApi] = useState<ApiKeyItem | null>(null);
   const [confirmDeleteBackup, setConfirmDeleteBackup] = useState<BackupItem | null>(null);
   const [restoreBackup, setRestoreBackup] = useState<BackupItem | null>(null);
   const [newApiName, setNewApiName] = useState('');
 
+  // General Settings Toggles
+  const [manutencaoModo, setManutencaoModo] = useState(false);
+
   const templates = [
-    { id: 't1', nome: 'Declaração de Matrícula', tipo: 'PDF', atualizado: '05 Ago 2026', icon: <FileText className="w-5 h-5" /> },
-    { id: 't2', nome: 'Certificado de Conclusão', tipo: 'PDF', atualizado: '22 Jul 2026', icon: <FileText className="w-5 h-5" /> },
-    { id: 't3', nome: 'Recibo de Propina', tipo: 'PDF', atualizado: '10 Jul 2026', icon: <FileText className="w-5 h-5" /> },
-    { id: 't4', nome: 'Cartão do Estudante', tipo: 'PDF', atualizado: '15 Jun 2026', icon: <FileText className="w-5 h-5" /> },
-    { id: 't5', nome: 'Fatura', tipo: 'PDF', atualizado: '01 Jun 2026', icon: <FileText className="w-5 h-5" /> },
-    { id: 't6', nome: 'Boletim de Notas', tipo: 'PDF', atualizado: '20 Mai 2026', icon: <FileText className="w-5 h-5" /> },
-    { id: 't7', nome: 'Contrato de Prestação de Serviços', tipo: 'DOCX', atualizado: '10 Mai 2026', icon: <FileText className="w-5 h-5" /> },
-    { id: 't8', nome: 'Termo de Responsabilidade', tipo: 'DOCX', atualizado: '05 Abr 2026', icon: <FileText className="w-5 h-5" /> },
+    { id: 't1', nome: 'Declaração de Matrícula', tipo: 'PDF', atualizado: '05 Ago 2026', icon: <FileText className="w-5 h-5 text-secondary" /> },
+    { id: 't2', nome: 'Certificado de Conclusão', tipo: 'PDF', atualizado: '22 Jul 2026', icon: <FileText className="w-5 h-5 text-secondary" /> },
+    { id: 't3', nome: 'Recibo de Propina (AGT)', tipo: 'PDF', atualizado: '10 Jul 2026', icon: <FileText className="w-5 h-5 text-secondary" /> },
+    { id: 't4', nome: 'Cartão do Estudante Digital', tipo: 'PDF', atualizado: '15 Jun 2026', icon: <FileText className="w-5 h-5 text-secondary" /> },
+    { id: 't5', nome: 'Fatura / Recibo Institucional', tipo: 'PDF', atualizado: '01 Jun 2026', icon: <FileText className="w-5 h-5 text-secondary" /> },
+    { id: 't6', nome: 'Boletim de Notas & Caderneta', tipo: 'PDF', atualizado: '20 Mai 2026', icon: <FileText className="w-5 h-5 text-secondary" /> },
+    { id: 't7', nome: 'Contrato de Prestação de Serviços', tipo: 'DOCX', atualizado: '10 Mai 2026', icon: <FileText className="w-5 h-5 text-secondary" /> },
+    { id: 't8', nome: 'Termo de Responsabilidade', tipo: 'DOCX', atualizado: '05 Abr 2026', icon: <FileText className="w-5 h-5 text-secondary" /> },
   ];
+
+  const handleSaveDados = (e: React.FormEvent) => {
+    e.preventDefault();
+    onShowToast('Dados institucionais guardados com sucesso no Vendaia OS®!');
+  };
 
   const createApiKey = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!newApiName.trim()) return;
     const newKey: ApiKeyItem = {
       id: `k${Date.now()}`,
       nome: newApiName,
@@ -119,7 +175,7 @@ export const ConfigInstituicaoView: React.FC<Props> = ({ onShowToast }) => {
       estado: 'Ativa',
     };
     setApiKeys([newKey, ...apiKeys]);
-    onShowToast(`API Key "${newApiName}" criada com sucesso!`);
+    onShowToast(`API Key "${newApiName}" gerada com sucesso!`);
     setApiModal(false);
     setNewApiName('');
   };
@@ -127,7 +183,7 @@ export const ConfigInstituicaoView: React.FC<Props> = ({ onShowToast }) => {
   const removeApiKey = () => {
     if (!confirmDeleteApi) return;
     setApiKeys(apiKeys.filter((k) => k.id !== confirmDeleteApi.id));
-    onShowToast(`API Key "${confirmDeleteApi.nome}" removida.`);
+    onShowToast(`API Key "${confirmDeleteApi.nome}" revogada.`);
     setConfirmDeleteApi(null);
   };
 
@@ -140,7 +196,7 @@ export const ConfigInstituicaoView: React.FC<Props> = ({ onShowToast }) => {
 
   const doRestore = () => {
     if (!restoreBackup) return;
-    onShowToast(`Restauro a partir de "${restoreBackup.nome}" iniciado. O sistema será reiniciado.`);
+    onShowToast(`Restauro a partir de "${restoreBackup.nome}" iniciado com sucesso.`);
     setRestoreBackup(null);
   };
 
@@ -154,86 +210,304 @@ export const ConfigInstituicaoView: React.FC<Props> = ({ onShowToast }) => {
       estado: 'Concluído',
     };
     setBackups([newBackup, ...backups]);
-    onShowToast('Backup manual criado com sucesso!');
+    onShowToast('Backup manual instantâneo criado com sucesso!');
   };
 
+  const activeIntegrationsCount = integrations.filter(i => i.estado === 'Conectado').length;
+
   return (
-    <div className="mt-header-height p-4 w-full max-w-7xl mx-auto flex flex-col gap-4">
-      <div className="flex justify-between items-center mb-1">
-        <h1 className="text-xl font-bold text-primary flex items-center gap-2">
-          <Settings className="w-5 h-5 text-secondary stroke-[1.75]" />
-          Configurações da Instituição
-        </h1>
+    <div className="mt-header-height p-4 sm:p-5 w-full flex flex-col gap-4">
+      {/* Top Header Flush */}
+      <div className="flex flex-wrap justify-between items-center gap-3">
+        <div>
+          <h1 className="text-xl font-bold text-primary flex items-center gap-2">
+            <Settings className="w-5 h-5 text-secondary stroke-[1.75]" />
+            Configurações da Instituição
+          </h1>
+          <p className="text-xs text-outline">
+            Parametrização global da instituição, segurança RLS, conectores e templates corporativos.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {/* Structure Selector RN9.08 */}
+          <div className="flex items-center gap-1.5 bg-surface-white border border-border-subtle rounded-xl px-3 py-1.5 shadow-2xs text-xs">
+            <Building2 className="w-4 h-4 text-secondary" />
+            <span className="text-outline font-medium text-[11px]">Estrutura:</span>
+            <select
+              value={selectedStructureId}
+              onChange={(e) => setSelectedStructureId(e.target.value)}
+              className="bg-transparent font-bold text-primary focus:outline-none cursor-pointer text-xs"
+            >
+              <option value="global">🌐 Global Institucional (Todas)</option>
+              {structures.map((s) => (
+                <option key={s.id} value={s.id}>
+                  🏢 {s.nome} ({s.codigo})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            onClick={() => onShowToast('Todas as alterações de configuração foram salvas!')}
+            className="bg-secondary text-surface-white hover:bg-secondary/90 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+          >
+            <Save className="w-4 h-4" /> Guardar Alterações
+          </button>
+        </div>
       </div>
 
-      {/* Tabs */}
-      <div className="bg-surface-white border border-border-subtle rounded-xl p-1 shadow-sm flex items-center gap-1 overflow-x-auto">
+      {/* 4-KPI Grid Icon-Boxes */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+        {/* KPI 1 */}
+        <div className="bg-surface-white border border-border-subtle rounded-xl p-3.5 shadow-2xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+            <Building2 className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[10px] font-bold text-outline uppercase tracking-wider block">IDENTIDADE LEGAL</span>
+            <span className="text-xs font-bold text-primary block truncate">NIF {dadosForm.nif}</span>
+            <span className="text-[10px] text-success font-medium flex items-center gap-1">
+              <Check className="w-3 h-3" /> Registo Ativo
+            </span>
+          </div>
+        </div>
+
+        {/* KPI 2 */}
+        <div className="bg-surface-white border border-border-subtle rounded-xl p-3.5 shadow-2xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center font-bold">
+            <Lock className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[10px] font-bold text-outline uppercase tracking-wider block">SEGURANÇA & RLS</span>
+            <span className="text-xs font-bold text-primary block">2FA Facultativo • 30m</span>
+            <span className="text-[10px] text-success font-medium flex items-center gap-1">
+              <Shield className="w-3 h-3" /> Auditoria On
+            </span>
+          </div>
+        </div>
+
+        {/* KPI 3 */}
+        <div className="bg-surface-white border border-border-subtle rounded-xl p-3.5 shadow-2xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-info/10 text-info flex items-center justify-center font-bold">
+            <Plug className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[10px] font-bold text-outline uppercase tracking-wider block">CONECTORES</span>
+            <span className="text-xs font-bold text-primary block">{activeIntegrationsCount} de {integrations.length} Ativos</span>
+            <span className="text-[10px] text-info font-medium flex items-center gap-1">
+              <Server className="w-3 h-3" /> Gateway EMIS OK
+            </span>
+          </div>
+        </div>
+
+        {/* KPI 4 */}
+        <div className="bg-surface-white border border-border-subtle rounded-xl p-3.5 shadow-2xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-warning/10 text-warning flex items-center justify-center font-bold">
+            <Database className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[10px] font-bold text-outline uppercase tracking-wider block">BACKUPS</span>
+            <span className="text-xs font-bold text-primary block truncate">Hoje, 03:00 (248 MB)</span>
+            <span className="text-[10px] text-outline font-medium flex items-center gap-1">
+              <HardDrive className="w-3 h-3" /> Retenção 30d
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs Navigation */}
+      <div className="bg-surface-white border border-border-subtle rounded-xl p-1 shadow-2xs flex items-center gap-1 overflow-x-auto">
         {tabs.map((item) => (
-          <button key={item.key} onClick={() => setTab(item.key)} className={`flex-1 min-w-[125px] py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${tab === item.key ? 'bg-primary text-surface-white shadow-sm' : 'text-on-surface-variant hover:bg-surface-container hover:text-primary'}`}>
-            {item.icon}{item.label}
+          <button
+            key={item.key}
+            onClick={() => setTab(item.key)}
+            className={`flex-1 min-w-[130px] py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+              tab === item.key
+                ? 'bg-primary text-surface-white shadow-xs'
+                : 'text-on-surface-variant hover:bg-surface-container hover:text-primary'
+            }`}
+          >
+            {item.icon}
+            {item.label}
           </button>
         ))}
       </div>
 
-      {/* Tab: Dados Institucionais */}
+      {/* Tab 1: Dados Institucionais */}
       {tab === 'dados' && (
-        <div className="bg-surface-white border border-border-subtle  rounded-xl p-4 shadow-sm">
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-primary">Dados Institucionais</h2>
-            <p className="text-xs text-on-surface-variant">Informações gerais da instituição apresentadas em documentos e no portal.</p>
+        <form onSubmit={handleSaveDados} className="bg-surface-white border border-border-subtle rounded-xl p-5 shadow-2xs space-y-5 text-xs">
+          <div>
+            <h2 className="text-base font-bold text-primary">Dados Institucionais</h2>
+            <p className="text-outline text-[11px]">
+              Informações oficiais e legais da instituição apresentadas em documentos, faturas e portais.
+            </p>
           </div>
+
           {/* Logótipo */}
-          <div className="mb-6 border border-border-subtle rounded-lg p-4">
-            <h3 className="font-bold text-secondary uppercase text-[10px] tracking-wider mb-3 border-b border-border-subtle/50 pb-1">Logótipo e Identidade Visual</h3>
+          <div className="border border-border-subtle rounded-xl p-4 bg-surface-container-low/30 space-y-3">
+            <h3 className="font-bold text-secondary uppercase text-[10px] tracking-wider flex items-center gap-1.5">
+              <Building2 className="w-3.5 h-3.5 text-secondary" />
+              Logótipo e Identidade Visual
+            </h3>
             <div className="flex items-center gap-6">
-              <div className="w-20 h-20 rounded bg-primary text-surface-white flex items-center justify-center font-bold text-2xl">VS</div>
-              <div className="flex flex-col gap-2">
-                <button onClick={() => onShowToast('Seletor de logótipo aberto.')} className="bg-secondary text-surface-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 cursor-pointer hover:bg-secondary/90 transition-all"><Upload className="w-3.5 h-3.5" />Carregar Logótipo</button>
-                <span className="text-[10px] text-outline">PNG, SVG ou JPG até 2MB. Recomendado: 512x512px.</span>
+              <div className="w-20 h-20 rounded-xl bg-primary text-surface-white flex items-center justify-center font-bold text-2xl shadow-sm">
+                VS
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => onShowToast('Seletor de logótipo aberto.')}
+                  className="bg-secondary text-surface-white px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer hover:bg-secondary/90 transition-all w-fit shadow-2xs"
+                >
+                  <Upload className="w-3.5 h-3.5" /> Carregar Novo Logótipo
+                </button>
+                <span className="text-[10px] text-outline">Ficheiros PNG, SVG ou JPG até 2MB. Dimensão recomendada: 512x512px.</span>
               </div>
             </div>
           </div>
-          {/* Form */}
+
+          {/* Form Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div><label className="block text-outline font-bold text-xs mb-1">Nome da Instituição</label><input type="text" defaultValue="Vendaia School®" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">Designação Oficial</label><input type="text" defaultValue="Instituto Vendaia de Ensino Secundário" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">NIF / Identificação Fiscal</label><input type="text" defaultValue="5412 0098 3" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">Telefone Geral</label><input type="text" defaultValue="+244 923 000 000" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">Email Geral</label><input type="email" defaultValue="geral@vendaia.edu" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">Website</label><input type="text" defaultValue="www.vendaia.edu" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div className="md:col-span-2"><label className="block text-outline font-bold text-xs mb-1">Morada</label><input type="text" defaultValue="Av. Comandante Valódia, nº 120, Luanda, Angola" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">Ano de Fundação</label><input type="text" defaultValue="1998" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">Diretor(a) Geral</label><input type="text" defaultValue="Dra. Sara Silva" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
+            <div>
+              <label className="block text-outline font-bold mb-1">Nome da Instituição</label>
+              <input
+                type="text"
+                value={dadosForm.nome}
+                onChange={(e) => setDadosForm({ ...dadosForm, nome: e.target.value })}
+                className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-outline font-bold mb-1">Designação Oficial / Razão Social</label>
+              <input
+                type="text"
+                value={dadosForm.designacao}
+                onChange={(e) => setDadosForm({ ...dadosForm, designacao: e.target.value })}
+                className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-outline font-bold mb-1">NIF / Identificação Fiscal</label>
+              <input
+                type="text"
+                value={dadosForm.nif}
+                onChange={(e) => setDadosForm({ ...dadosForm, nif: e.target.value })}
+                className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none font-mono"
+              />
+            </div>
+            <div>
+              <label className="block text-outline font-bold mb-1">Telefone Geral</label>
+              <input
+                type="text"
+                value={dadosForm.telefone}
+                onChange={(e) => setDadosForm({ ...dadosForm, telefone: e.target.value })}
+                className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-outline font-bold mb-1">Email Geral Institucional</label>
+              <input
+                type="email"
+                value={dadosForm.email}
+                onChange={(e) => setDadosForm({ ...dadosForm, email: e.target.value })}
+                className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-outline font-bold mb-1">Website Oficial</label>
+              <input
+                type="text"
+                value={dadosForm.website}
+                onChange={(e) => setDadosForm({ ...dadosForm, website: e.target.value })}
+                className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-outline font-bold mb-1">Morada da Sede</label>
+              <input
+                type="text"
+                value={dadosForm.morada}
+                onChange={(e) => setDadosForm({ ...dadosForm, morada: e.target.value })}
+                className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-outline font-bold mb-1">Ano de Fundação</label>
+              <input
+                type="text"
+                value={dadosForm.anoFundacao}
+                onChange={(e) => setDadosForm({ ...dadosForm, anoFundacao: e.target.value })}
+                className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-outline font-bold mb-1">Diretor(a) Geral</label>
+              <input
+                type="text"
+                value={dadosForm.diretorGeral}
+                onChange={(e) => setDadosForm({ ...dadosForm, diretorGeral: e.target.value })}
+                className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none"
+              />
+            </div>
           </div>
-          <div className="flex justify-end pt-4 border-t border-border-subtle mt-4">
-            <button onClick={() => onShowToast('Dados institucionais guardados com sucesso!')} className="bg-secondary text-surface-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer hover:bg-secondary/90 transition-all shadow-sm"><Save className="w-4 h-4" />Guardar Dados</button>
+
+          <div className="flex justify-end pt-3 border-t border-border-subtle">
+            <button
+              type="submit"
+              className="bg-secondary text-surface-white px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer hover:bg-secondary/90 transition-all shadow-sm"
+            >
+              <Save className="w-4 h-4" /> Guardar Dados Institucionais
+            </button>
           </div>
-        </div>
+        </form>
       )}
 
-      {/* Tab: Templates de Documentos */}
+      {/* Tab 2: Templates de Documentos */}
       {tab === 'templates' && (
-        <div className="bg-surface-white border border-border-subtle  rounded-xl p-4 shadow-sm">
-          <div className="flex justify-between items-center mb-4">
+        <div className="bg-surface-white border border-border-subtle rounded-xl p-5 shadow-2xs space-y-4">
+          <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-lg font-bold text-primary">Templates de Documentos</h2>
-              <p className="text-xs text-on-surface-variant">Modelos de documentos usados pelo sistema para emissão automática.</p>
+              <h2 className="text-base font-bold text-primary">Templates de Documentos</h2>
+              <p className="text-outline text-[11px]">
+                Modelos de documentos PDF e DOCX utilizados pelo sistema para emissão automática.
+              </p>
             </div>
-            <button onClick={() => onShowToast('Seletor de ficheiro de template aberto.')} className="bg-secondary text-surface-white hover:bg-secondary/90 px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer"><Plus className="w-4 h-4" />Carregar Template</button>
+            <button
+              onClick={() => onShowToast('Seletor de ficheiro de template aberto.')}
+              className="bg-secondary text-surface-white hover:bg-secondary/90 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-2xs transition-all cursor-pointer"
+            >
+              <Plus className="w-4 h-4" /> Carregar Novo Template
+            </button>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {templates.map((t) => (
-              <div key={t.id} className="border border-border-subtle rounded-lg p-4 flex items-center justify-between hover:shadow-md transition-all">
+              <div key={t.id} className="border border-border-subtle rounded-xl p-3.5 flex items-center justify-between hover:border-secondary/40 transition-all bg-surface-white shadow-2xs">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded bg-primary/10 text-primary flex items-center justify-center">{t.icon}</div>
+                  <div className="w-10 h-10 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center font-bold">
+                    {t.icon}
+                  </div>
                   <div>
                     <p className="font-bold text-primary text-xs">{t.nome}</p>
-                    <p className="text-[11px] text-outline">{t.tipo} • Atualizado {t.atualizado}</p>
+                    <p className="text-[10px] text-outline">{t.tipo} • Atualizado em {t.atualizado}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <button onClick={() => onShowToast(`Pré-visualização do template "${t.nome}" aberta.`)} className="p-1.5 text-outline hover:text-info rounded hover:bg-info/10 transition-colors cursor-pointer" title="Pré-visualizar"><Eye className="w-4 h-4" /></button>
-                  <button onClick={() => onShowToast(`Download do template "${t.nome}" iniciado.`)} className="p-1.5 text-outline hover:text-success rounded hover:bg-success/10 transition-colors cursor-pointer" title="Download"><Download className="w-4 h-4" /></button>
+                  <button
+                    onClick={() => onShowToast(`Pré-visualização do template "${t.nome}" aberta.`)}
+                    className="p-1.5 text-outline hover:text-info rounded-lg hover:bg-info/10 transition-colors cursor-pointer"
+                    title="Pré-visualizar"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => onShowToast(`Download do template "${t.nome}" iniciado.`)}
+                    className="p-1.5 text-outline hover:text-success rounded-lg hover:bg-success/10 transition-colors cursor-pointer"
+                    title="Download"
+                  >
+                    <Download className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             ))}
@@ -241,17 +515,20 @@ export const ConfigInstituicaoView: React.FC<Props> = ({ onShowToast }) => {
         </div>
       )}
 
-      {/* Tab: Idioma */}
+      {/* Tab 3: Idioma & Localização */}
       {tab === 'idioma' && (
-        <div className="bg-surface-white border border-border-subtle  rounded-xl p-4 shadow-sm">
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-primary">Idioma e Localização</h2>
-            <p className="text-xs text-on-surface-variant">Configurações de idioma, formatação de datas e moeda.</p>
+        <div className="bg-surface-white border border-border-subtle rounded-xl p-5 shadow-2xs space-y-4 text-xs">
+          <div>
+            <h2 className="text-base font-bold text-primary">Idioma e Localização</h2>
+            <p className="text-outline text-[11px]">
+              Definições de idioma nativo, moedas de faturação e formatação regional de datas.
+            </p>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-outline font-bold text-xs mb-1">Idioma Principal</label>
-              <select className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none bg-surface-white">
+              <label className="block text-outline font-bold mb-1">Idioma Principal da Plataforma</label>
+              <select className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none bg-surface-white cursor-pointer">
                 <option>Português (Angola) — pt-AO</option>
                 <option>Português (Portugal) — pt-PT</option>
                 <option>Português (Brasil) — pt-BR</option>
@@ -260,144 +537,136 @@ export const ConfigInstituicaoView: React.FC<Props> = ({ onShowToast }) => {
               </select>
             </div>
             <div>
-              <label className="block text-outline font-bold text-xs mb-1">Idiomas Secundários (Ativos)</label>
-              <div className="flex flex-wrap gap-2 mt-1">
-                <label className="flex items-center gap-1.5 text-xs cursor-pointer"><input type="checkbox" defaultChecked className="rounded border-outline-variant text-secondary focus:ring-secondary" /> English</label>
-                <label className="flex items-center gap-1.5 text-xs cursor-pointer"><input type="checkbox" className="rounded border-outline-variant text-secondary focus:ring-secondary" /> Français</label>
-                <label className="flex items-center gap-1.5 text-xs cursor-pointer"><input type="checkbox" className="rounded border-outline-variant text-secondary focus:ring-secondary" /> Español</label>
-              </div>
-            </div>
-            <div>
-              <label className="block text-outline font-bold text-xs mb-1">Formato de Data</label>
-              <select className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none bg-surface-white">
+              <label className="block text-outline font-bold mb-1">Formato de Data Oficial</label>
+              <select className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none bg-surface-white cursor-pointer">
                 <option>DD MMM AAAA (10 Ago 2026)</option>
                 <option>DD/MM/AAAA (10/08/2026)</option>
                 <option>AAAA-MM-DD (2026-08-10)</option>
               </select>
             </div>
             <div>
-              <label className="block text-outline font-bold text-xs mb-1">Moeda</label>
-              <select className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none bg-surface-white">
+              <label className="block text-outline font-bold mb-1">Moeda Principal de Faturação</label>
+              <select className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none bg-surface-white cursor-pointer">
                 <option>Kwanza Angolano (Kz / AOA)</option>
                 <option>Euro (€ / EUR)</option>
                 <option>Dólar Americano ($ / USD)</option>
               </select>
             </div>
             <div>
-              <label className="block text-outline font-bold text-xs mb-1">Fuso Horário</label>
-              <select className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none bg-surface-white">
+              <label className="block text-outline font-bold mb-1">Fuso Horário de Referência</label>
+              <select className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none bg-surface-white cursor-pointer">
                 <option>África/Luanda (WAT, UTC+1)</option>
                 <option>Europe/Lisbon (WET, UTC+0)</option>
               </select>
             </div>
-            <div>
-              <label className="block text-outline font-bold text-xs mb-1">Primeiro Dia da Semana</label>
-              <select className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none bg-surface-white">
-                <option>Segunda-feira</option>
-                <option>Domingo</option>
-              </select>
-            </div>
           </div>
-          <div className="flex justify-end pt-4 border-t border-border-subtle mt-4">
-            <button onClick={() => onShowToast('Configurações de idioma guardadas com sucesso!')} className="bg-secondary text-surface-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer hover:bg-secondary/90 transition-all shadow-sm"><Save className="w-4 h-4" />Guardar</button>
+
+          <div className="flex justify-end pt-3 border-t border-border-subtle">
+            <button
+              onClick={() => onShowToast('Configurações de localização guardadas!')}
+              className="bg-secondary text-surface-white px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer hover:bg-secondary/90 transition-all shadow-sm"
+            >
+              <Save className="w-4 h-4" /> Guardar Localização
+            </button>
           </div>
         </div>
       )}
 
-      {/* Tab: Segurança */}
+      {/* Tab 4: Segurança & RLS */}
       {tab === 'seguranca' && (
-        <div className="bg-surface-white border border-border-subtle  rounded-xl p-4 shadow-sm">
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-primary">Segurança</h2>
-            <p className="text-xs text-on-surface-variant">Políticas de segurança, autenticação e proteção de dados.</p>
+        <div className="bg-surface-white border border-border-subtle rounded-xl p-5 shadow-2xs space-y-5 text-xs">
+          <div>
+            <h2 className="text-base font-bold text-primary">Segurança & Políticas RLS</h2>
+            <p className="text-outline text-[11px]">
+              Políticas de palavras-passe, autenticação forte (2FA), gestão de sessões e proteção de dados.
+            </p>
           </div>
-          <div className="space-y-6">
-            {/* Políticas de Palavra-passe */}
-            <div>
-              <h3 className="font-bold text-secondary uppercase text-[10px] tracking-wider mb-2 border-b border-border-subtle/50 pb-1">Políticas de Palavra-passe</h3>
+
+          <div className="space-y-5">
+            {/* Pwd Policies */}
+            <div className="space-y-3">
+              <h3 className="font-bold text-secondary uppercase text-[10px] tracking-wider border-b border-border-subtle pb-1">
+                Políticas de Palavra-passe
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div><label className="block text-outline font-bold text-xs mb-1">Comprimento Mínimo</label><input type="number" defaultValue="8" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-                <div><label className="block text-outline font-bold text-xs mb-1">Expiração (dias)</label><input type="number" defaultValue="90" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-                <div><label className="block text-outline font-bold text-xs mb-1">Histórico (impede reutilização)</label><input type="number" defaultValue="5" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-                <div><label className="block text-outline font-bold text-xs mb-1">Tentativas antes de bloqueio</label><input type="number" defaultValue="5" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
+                <div>
+                  <label className="block text-outline font-bold mb-1">Comprimento Mínimo (Caracteres)</label>
+                  <input type="number" defaultValue={8} className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-outline font-bold mb-1">Expiração Obrigatoria (Dias)</label>
+                  <input type="number" defaultValue={90} className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none" />
+                </div>
               </div>
-              <div className="space-y-2 mt-3 text-xs">
-                <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" defaultChecked className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Exigir letra maiúscula</span></label>
-                <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" defaultChecked className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Exigir número</span></label>
-                <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" defaultChecked className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Exigir caractere especial</span></label>
-                <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Forçar alteração no primeiro acesso</span></label>
-              </div>
-            </div>
-            {/* Autenticação em 2 Fatores */}
-            <div>
-              <h3 className="font-bold text-secondary uppercase text-[10px] tracking-wider mb-2 border-b border-border-subtle/50 pb-1">Autenticação em 2 Fatores (2FA)</h3>
-              <div className="space-y-2 text-xs">
-                <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" defaultChecked className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Exigir 2FA para administradores</span></label>
-                <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Exigir 2FA para todos os utilizadores</span></label>
-                <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" defaultChecked className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Permitir 2FA via SMS</span></label>
-                <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" defaultChecked className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Permitir 2FA via App (Google Authenticator)</span></label>
+              <div className="space-y-1.5">
+                <label className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-surface-container-low/40 transition-colors">
+                  <input type="checkbox" defaultChecked className="rounded border-border-subtle text-secondary focus:ring-secondary cursor-pointer" />
+                  <span className="font-semibold text-primary">Exigir letras maiúsculas e caracteres especiais</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-surface-container-low/40 transition-colors">
+                  <input type="checkbox" defaultChecked className="rounded border-border-subtle text-secondary focus:ring-secondary cursor-pointer" />
+                  <span className="font-semibold text-primary">Forçar alteração de palavra-passe no primeiro acesso</span>
+                </label>
               </div>
             </div>
-            {/* Sessões */}
-            <div>
-              <h3 className="font-bold text-secondary uppercase text-[10px] tracking-wider mb-2 border-b border-border-subtle/50 pb-1">Gestão de Sessões</h3>
+
+            {/* Session Policies */}
+            <div className="space-y-3 pt-3 border-t border-border-subtle">
+              <h3 className="font-bold text-secondary uppercase text-[10px] tracking-wider border-b border-border-subtle pb-1">
+                Gestão de Sessões & Autenticação 2FA
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div><label className="block text-outline font-bold text-xs mb-1">Tempo limite de sessão (minutos)</label><input type="number" defaultValue="30" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-                <div><label className="block text-outline font-bold text-xs mb-1">Sessões simultâneas por utilizador</label><input type="number" defaultValue="1" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-              </div>
-            </div>
-            {/* LGPD / Proteção de Dados */}
-            <div>
-              <h3 className="font-bold text-secondary uppercase text-[10px] tracking-wider mb-2 border-b border-border-subtle/50 pb-1">Proteção de Dados (LGPD/RGPD)</h3>
-              <div className="space-y-2 text-xs">
-                <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" defaultChecked className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Registar consentimento de encarregados para tratamento de dados</span></label>
-                <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" defaultChecked className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Permitir exportação de dados pessoais (direito de acesso)</span></label>
-                <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" defaultChecked className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Anonimizar dados de estudantes inativos após 5 anos</span></label>
+                <div>
+                  <label className="block text-outline font-bold mb-1">Tempo limite de inatividade (minutos)</label>
+                  <input type="number" defaultValue={30} className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-outline font-bold mb-1">Tentativas de login falhadas antes de bloqueio</label>
+                  <input type="number" defaultValue={5} className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none" />
+                </div>
               </div>
             </div>
           </div>
-          <div className="flex justify-end pt-4 border-t border-border-subtle mt-4">
-            <button onClick={() => onShowToast('Configurações de segurança guardadas com sucesso!')} className="bg-secondary text-surface-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer hover:bg-secondary/90 transition-all shadow-sm"><Save className="w-4 h-4" />Guardar Segurança</button>
+
+          <div className="flex justify-end pt-3 border-t border-border-subtle">
+            <button
+              onClick={() => onShowToast('Políticas de segurança guardadas com sucesso!')}
+              className="bg-secondary text-surface-white px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer hover:bg-secondary/90 transition-all shadow-sm"
+            >
+              <Save className="w-4 h-4" /> Guardar Segurança
+            </button>
           </div>
         </div>
       )}
 
-      {/* Tab: Backups */}
+      {/* Tab 5: Backups */}
       {tab === 'backups' && (
-        <div className="bg-surface-white border border-border-subtle  rounded-xl p-4 shadow-sm">
-          <div className="flex justify-between items-center mb-4">
+        <div className="bg-surface-white border border-border-subtle rounded-xl p-5 shadow-2xs space-y-4">
+          <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-lg font-bold text-primary">Backups do Sistema</h2>
-              <p className="text-xs text-on-surface-variant">Cópias de segurança automáticas e manuais da base de dados.</p>
+              <h2 className="text-base font-bold text-primary">Backups do Sistema</h2>
+              <p className="text-outline text-[11px]">
+                Cópias de segurança automáticas e manuais da base de dados Supabase e ficheiros.
+              </p>
             </div>
-            <div className="flex gap-2">
-              <button onClick={createBackup} className="bg-secondary text-surface-white hover:bg-secondary/90 px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer"><Database className="w-4 h-4" />Criar Backup Agora</button>
-            </div>
+            <button
+              onClick={createBackup}
+              className="bg-secondary text-surface-white hover:bg-secondary/90 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-2xs transition-all cursor-pointer"
+            >
+              <Database className="w-4 h-4" /> Criar Backup Agora
+            </button>
           </div>
-          {/* Configuração de backup automático */}
-          <div className="mb-4 border border-border-subtle rounded-lg p-4">
-            <h3 className="font-bold text-secondary uppercase text-[10px] tracking-wider mb-2 border-b border-border-subtle/50 pb-1">Backup Automático</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div><label className="block text-outline font-bold text-xs mb-1">Frequência</label><select className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none bg-surface-white"><option>Diário</option><option>Semanal</option><option>Mensal</option></select></div>
-              <div><label className="block text-outline font-bold text-xs mb-1">Hora</label><input type="text" defaultValue="03:00" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-              <div><label className="block text-outline font-bold text-xs mb-1">Retenção (dias)</label><input type="number" defaultValue="30" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            </div>
-            <div className="mt-3 flex items-center gap-3">
-              <span className="bg-success/15 text-success px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1"><CheckCircle2 className="w-3 h-3" />Ativo</span>
-              <span className="text-[11px] text-outline">Próximo backup: 11 Ago 2026, 03:00</span>
-            </div>
-          </div>
-          {/* Tabela de backups */}
-          <div className="overflow-x-auto border border-border-subtle rounded-lg">
-            <table className="w-full text-left border-collapse">
+
+          <div className="overflow-x-auto border border-border-subtle rounded-xl">
+            <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-surface-container-low">
-                  <th className="px-3.5 py-3 text-left">Nome</th>
-                  <th className="px-3.5 py-3 text-left">Data</th>
-                  <th className="px-3.5 py-3 text-left">Tamanho</th>
-                  <th className="px-3.5 py-3 text-center">Tipo</th>
-                  <th className="px-3.5 py-3 text-center">Estado</th>
-                  <th className="px-3.5 py-3 text-right">Ações</th>
+                <tr className="bg-surface-container-low border-b border-border-subtle">
+                  <th className="px-3.5 py-3 font-bold text-primary">Nome</th>
+                  <th className="px-3.5 py-3 font-bold text-primary">Data</th>
+                  <th className="px-3.5 py-3 font-bold text-primary">Tamanho</th>
+                  <th className="px-3.5 py-3 text-center font-bold text-primary">Tipo</th>
+                  <th className="px-3.5 py-3 text-center font-bold text-primary">Estado</th>
+                  <th className="px-3.5 py-3 text-right font-bold text-primary">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle">
@@ -405,14 +674,38 @@ export const ConfigInstituicaoView: React.FC<Props> = ({ onShowToast }) => {
                   <tr key={b.id} className="hover:bg-surface-container-low/30 transition-colors">
                     <td className="px-3.5 py-3 font-bold text-primary font-mono text-[11px]">{b.nome}</td>
                     <td className="px-3.5 py-3 text-outline">{b.data}</td>
-                    <td className="px-3.5 py-3 text-on-surface-variant">{b.tamanho}</td>
-                    <td className="px-3.5 py-3 text-center"><span className={`px-2 py-0.5 rounded text-[10px] font-bold ${b.tipo === 'Automático' ? 'bg-info/10 text-info' : 'bg-secondary/10 text-secondary'}`}>{b.tipo}</span></td>
-                    <td className="px-3.5 py-3 text-center"><span className={`${estadoChip(b.estado)} px-2.5 py-1 rounded-full text-[11px] font-bold`}>{b.estado}</span></td>
+                    <td className="px-3.5 py-3 text-on-surface-variant font-semibold">{b.tamanho}</td>
+                    <td className="px-3.5 py-3 text-center">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${b.tipo === 'Automático' ? 'bg-info/10 text-info' : 'bg-secondary/10 text-secondary'}`}>
+                        {b.tipo}
+                      </span>
+                    </td>
+                    <td className="px-3.5 py-3 text-center">
+                      <span className={`${estadoChip(b.estado)} px-2.5 py-1 rounded-full text-[10px] font-bold`}>{b.estado}</span>
+                    </td>
                     <td className="px-3.5 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => onShowToast(`Download do backup "${b.nome}" iniciado.`)} className="p-1.5 text-outline hover:text-success rounded hover:bg-success/10 transition-colors cursor-pointer" title="Download"><Download className="w-4 h-4" /></button>
-                        <button onClick={() => setRestoreBackup(b)} className="p-1.5 text-outline hover:text-info rounded hover:bg-info/10 transition-colors cursor-pointer" title="Restaurar"><RefreshCw className="w-4 h-4" /></button>
-                        <button onClick={() => setConfirmDeleteBackup(b)} className="p-1.5 text-outline hover:text-error rounded hover:bg-error/10 transition-colors cursor-pointer" title="Remover"><Trash2 className="w-4 h-4" /></button>
+                        <button
+                          onClick={() => onShowToast(`Download do backup "${b.nome}" iniciado.`)}
+                          className="p-1.5 text-outline hover:text-success rounded-lg hover:bg-success/10 transition-colors cursor-pointer"
+                          title="Download"
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => setRestoreBackup(b)}
+                          className="p-1.5 text-outline hover:text-info rounded-lg hover:bg-info/10 transition-colors cursor-pointer"
+                          title="Restaurar"
+                        >
+                          <RefreshCw className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteBackup(b)}
+                          className="p-1.5 text-outline hover:text-error rounded-lg hover:bg-error/10 transition-colors cursor-pointer"
+                          title="Remover"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -423,27 +716,37 @@ export const ConfigInstituicaoView: React.FC<Props> = ({ onShowToast }) => {
         </div>
       )}
 
-      {/* Tab: Integrações */}
+      {/* Tab 6: Integrações */}
       {tab === 'integracoes' && (
-        <div className="bg-surface-white border border-border-subtle  rounded-xl p-4 shadow-sm">
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-primary">Integrações</h2>
-            <p className="text-xs text-on-surface-variant">Serviços externos conectados à plataforma Vendaia School®.</p>
+        <div className="bg-surface-white border border-border-subtle rounded-xl p-5 shadow-2xs space-y-4">
+          <div>
+            <h2 className="text-base font-bold text-primary">Integrações de Terceiros</h2>
+            <p className="text-outline text-[11px]">
+              Serviços externos e conectores integrados ao ecossistema Vendaia School®.
+            </p>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {integrations.map((int) => (
-              <div key={int.id} className="border border-border-subtle rounded-lg p-4 flex items-center justify-between">
+              <div key={int.id} className="border border-border-subtle rounded-xl p-4 flex items-center justify-between bg-surface-white shadow-2xs hover:border-secondary/40 transition-all">
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded flex items-center justify-center ${int.estado === 'Conectado' ? 'bg-success/10 text-success' : int.estado === 'Erro' ? 'bg-error/10 text-error' : 'bg-surface-container text-outline'}`}><Plug className="w-5 h-5" /></div>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold ${int.estado === 'Conectado' ? 'bg-success/10 text-success' : int.estado === 'Erro' ? 'bg-error/10 text-error' : 'bg-surface-container text-outline'}`}>
+                    <Plug className="w-5 h-5" />
+                  </div>
                   <div>
                     <p className="font-bold text-primary text-xs">{int.nome}</p>
-                    <p className="text-[11px] text-on-surface-variant">{int.descricao}</p>
-                    <span className="text-[10px] text-outline uppercase font-bold">{int.categoria}</span>
+                    <p className="text-[11px] text-outline leading-tight">{int.descricao}</p>
+                    <span className="text-[9px] text-secondary uppercase font-bold tracking-wider">{int.categoria}</span>
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <span className={`${estadoChip(int.estado)} px-2 py-0.5 rounded-full text-[10px] font-bold`}>{int.estado}</span>
-                  <button onClick={() => onShowToast(`Configuração de "${int.nome}" aberta.`)} className="text-[10px] text-secondary font-bold hover:underline cursor-pointer">{int.estado === 'Conectado' ? 'Configurar' : 'Conectar'}</button>
+                  <span className={`${estadoChip(int.estado)} px-2.5 py-0.5 rounded-full text-[10px] font-bold`}>{int.estado}</span>
+                  <button
+                    onClick={() => onShowToast(`Configuração de "${int.nome}" aberta.`)}
+                    className="text-[11px] text-secondary font-bold hover:underline cursor-pointer"
+                  >
+                    {int.estado === 'Conectado' ? 'Configurar' : 'Conectar'}
+                  </button>
                 </div>
               </div>
             ))}
@@ -451,40 +754,66 @@ export const ConfigInstituicaoView: React.FC<Props> = ({ onShowToast }) => {
         </div>
       )}
 
-      {/* Tab: APIs */}
+      {/* Tab 7: APIs */}
       {tab === 'apis' && (
-        <div className="bg-surface-white border border-border-subtle  rounded-xl p-4 shadow-sm">
-          <div className="flex justify-between items-center mb-4">
+        <div className="bg-surface-white border border-border-subtle rounded-xl p-5 shadow-2xs space-y-4">
+          <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-lg font-bold text-primary">APIs e Chaves de Acesso</h2>
-              <p className="text-xs text-on-surface-variant">Gestão de chaves de API para integrações externas.</p>
+              <h2 className="text-base font-bold text-primary">APIs e Chaves de Acesso</h2>
+              <p className="text-outline text-[11px]">
+                Gestão de chaves de API para aplicações externas e webhooks.
+              </p>
             </div>
-            <button onClick={() => setApiModal(true)} className="bg-secondary text-surface-white hover:bg-secondary/90 px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer"><Plus className="w-4 h-4" />Gerar Nova Key</button>
+            <button
+              onClick={() => setApiModal(true)}
+              className="bg-secondary text-surface-white hover:bg-secondary/90 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-2xs transition-all cursor-pointer"
+            >
+              <Plus className="w-4 h-4" /> Gerar Nova API Key
+            </button>
           </div>
-          <div className="overflow-x-auto border border-border-subtle rounded-lg">
-            <table className="w-full text-left border-collapse">
+
+          <div className="overflow-x-auto border border-border-subtle rounded-xl">
+            <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-surface-container-low">
-                  <th className="px-3.5 py-3 text-left">Nome</th>
-                  <th className="px-3.5 py-3 text-left">Chave</th>
-                  <th className="px-3.5 py-3 text-left">Criada</th>
-                  <th className="px-3.5 py-3 text-left">Última Utilização</th>
-                  <th className="px-3.5 py-3 text-center">Estado</th>
-                  <th className="px-3.5 py-3 text-right">Ações</th>
+                <tr className="bg-surface-container-low border-b border-border-subtle">
+                  <th className="px-3.5 py-3 font-bold text-primary">Nome</th>
+                  <th className="px-3.5 py-3 font-bold text-primary">Chave (Token)</th>
+                  <th className="px-3.5 py-3 font-bold text-primary">Criada</th>
+                  <th className="px-3.5 py-3 font-bold text-primary">Última Utilização</th>
+                  <th className="px-3.5 py-3 text-center font-bold text-primary">Estado</th>
+                  <th className="px-3.5 py-3 text-right font-bold text-primary">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle">
                 {apiKeys.map((k) => (
                   <tr key={k.id} className="hover:bg-surface-container-low/30 transition-colors">
                     <td className="px-3.5 py-3 font-bold text-primary">{k.nome}</td>
-                    <td className="px-3.5 py-3"><span className="font-mono text-[11px] text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded">{k.chave}</span></td>
+                    <td className="px-3.5 py-3">
+                      <span className="font-mono text-[11px] text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded border border-border-subtle">
+                        {k.chave}
+                      </span>
+                    </td>
                     <td className="px-3.5 py-3 text-outline">{k.criada}</td>
                     <td className="px-3.5 py-3 text-outline">{k.ultimaUsada}</td>
-                    <td className="px-3.5 py-3 text-center"><span className={`${estadoChip(k.estado)} px-2.5 py-1 rounded-full text-[11px] font-bold`}>{k.estado}</span></td>
+                    <td className="px-3.5 py-3 text-center">
+                      <span className={`${estadoChip(k.estado)} px-2.5 py-1 rounded-full text-[10px] font-bold`}>{k.estado}</span>
+                    </td>
                     <td className="px-3.5 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => onShowToast(`Chave de "${k.nome}" copiada para a área de transferência.`)} className="p-1.5 text-outline hover:text-info rounded hover:bg-info/10 transition-colors cursor-pointer" title="Copiar"><Key className="w-4 h-4" /></button>
-                        <button onClick={() => setConfirmDeleteApi(k)} className="p-1.5 text-outline hover:text-error rounded hover:bg-error/10 transition-colors cursor-pointer" title="Revogar"><Trash2 className="w-4 h-4" /></button>
+                        <button
+                          onClick={() => onShowToast(`Chave de "${k.nome}" copiada!`)}
+                          className="p-1.5 text-outline hover:text-info rounded-lg hover:bg-info/10 transition-colors cursor-pointer"
+                          title="Copiar Chave"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteApi(k)}
+                          className="p-1.5 text-outline hover:text-error rounded-lg hover:bg-error/10 transition-colors cursor-pointer"
+                          title="Revogar"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -495,68 +824,125 @@ export const ConfigInstituicaoView: React.FC<Props> = ({ onShowToast }) => {
         </div>
       )}
 
-      {/* Tab: Configurações Gerais */}
+      {/* Tab 8: Configurações Gerais */}
       {tab === 'geral' && (
-        <div className="bg-surface-white border border-border-subtle  rounded-xl p-4 shadow-sm">
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-primary">Configurações Gerais</h2>
-            <p className="text-xs text-on-surface-variant">Parâmetros globais do sistema.</p>
+        <div className="bg-surface-white border border-border-subtle rounded-xl p-5 shadow-2xs space-y-4 text-xs">
+          <div>
+            <h2 className="text-base font-bold text-primary">Configurações Gerais da Plataforma</h2>
+            <p className="text-outline text-[11px]">
+              Opções globais de manutenção, termos de serviço e privacidade.
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div><label className="block text-outline font-bold text-xs mb-1">Ano Letivo Ativo</label><select className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none bg-surface-white"><option>2026/2027</option><option>2025/2026</option></select></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">Limite de Estudantes por Turma</label><input type="number" defaultValue="35" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">Período de Matrículas (Início)</label><input type="text" defaultValue="01 Set 2026" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">Período de Matrículas (Fim)</label><input type="text" defaultValue="15 Set 2026" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">Tolerância de Pagamento (dias)</label><input type="number" defaultValue="5" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">Multa por Atraso (%)</label><input type="number" defaultValue="2" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">Juros de Mora (%)</label><input type="number" defaultValue="1" step="0.1" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-            <div><label className="block text-outline font-bold text-xs mb-1">Limite de Faltas Injustificadas</label><input type="number" defaultValue="10" className="w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></div>
-          </div>
-          <div className="mt-6 space-y-2 text-xs">
-            <h3 className="font-bold text-secondary uppercase text-[10px] tracking-wider mb-2 border-b border-border-subtle/50 pb-1">Notificações do Sistema</h3>
-            <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" defaultChecked className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Notificar encarregados sobre faltas automaticamente</span></label>
-            <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" defaultChecked className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Notificar encarregados sobre propinas em atraso</span></label>
-            <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" defaultChecked className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Enviar relatório diário por email à direção</span></label>
-            <label className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-surface-container-low/30 transition-colors"><input type="checkbox" className="rounded border-outline-variant text-secondary focus:ring-secondary" /><span className="font-medium">Permitir matrícula online (auto-atendimento)</span></label>
-          </div>
-          <div className="flex justify-end pt-4 border-t border-border-subtle mt-4">
-            <button onClick={() => onShowToast('Configurações gerais guardadas com sucesso!')} className="bg-secondary text-surface-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer hover:bg-secondary/90 transition-all shadow-sm"><Save className="w-4 h-4" />Guardar Configurações</button>
+
+          <div className="space-y-4">
+            <div className="p-4 border border-border-subtle rounded-xl bg-surface-container-low/30 flex items-center justify-between">
+              <div>
+                <p className="font-bold text-primary text-xs">Modo de Manutenção Global</p>
+                <p className="text-[11px] text-outline">Bloqueia o acesso temporário de alunos e encarregados no portal.</p>
+              </div>
+              <label className="flex items-center gap-2 cursor-pointer font-bold">
+                <input
+                  type="checkbox"
+                  checked={manutencaoModo}
+                  onChange={(e) => {
+                    setManutencaoModo(e.target.checked);
+                    onShowToast(`Modo de manutenção ${e.target.checked ? 'ativado' : 'desativado'}.`);
+                  }}
+                  className="w-4 h-4 rounded border-border-subtle text-secondary focus:ring-secondary cursor-pointer"
+                />
+                {manutencaoModo ? 'Ativo' : 'Desativado'}
+              </label>
+            </div>
           </div>
         </div>
       )}
 
       {/* Modal: Gerar API Key */}
       {apiModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-surface-white rounded-xl shadow-2xl border border-border-subtle w-full max-w-md p-6 my-8">
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 overflow-y-auto backdrop-blur-xs">
+          <div className="bg-surface-white rounded-2xl shadow-2xl border border-border-subtle w-full max-w-md p-6 my-8">
             <div className="flex justify-between items-center border-b border-border-subtle pb-3 mb-4">
-              <h2 className="text-lg font-bold text-primary flex items-center gap-2"><Key className="w-5 h-5 text-secondary" />Gerar Nova API Key</h2>
-              <button onClick={() => setApiModal(false)} className="text-outline hover:text-primary p-1 rounded hover:bg-surface-container cursor-pointer"><X className="w-4 h-4" /></button>
+              <h2 className="text-base font-bold text-primary flex items-center gap-2">
+                <Key className="w-5 h-5 text-secondary" /> Gerar Nova API Key
+              </h2>
+              <button onClick={() => setApiModal(false)} className="text-outline hover:text-primary p-1 rounded-lg hover:bg-surface-container cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <form onSubmit={createApiKey} className="space-y-3 text-xs">
-              <label className="block text-outline font-bold">Nome da Chave<input type="text" required value={newApiName} onChange={(e) => setNewApiName(e.target.value)} placeholder="Ex: App Mobile, Webhook..." className="mt-1 w-full border border-border-subtle rounded p-2 text-xs focus:border-secondary focus:outline-none" /></label>
-              <p className="text-[11px] text-outline">A chave será gerada automaticamente após a criação. Guarde-a em local seguro.</p>
-              <div className="flex justify-end gap-2 border-t border-border-subtle pt-3">
-                <button type="button" onClick={() => setApiModal(false)} className="border border-border-subtle px-4 py-2 rounded-lg font-semibold cursor-pointer hover:bg-surface-container transition-all">Cancelar</button>
-                <button type="submit" className="bg-secondary text-surface-white px-4 py-2 rounded-lg font-bold cursor-pointer hover:bg-secondary/90 transition-all">Gerar Key</button>
+            <form onSubmit={createApiKey} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-outline font-bold mb-1">Nome da Aplicação / Integração</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="ex: App Móvil Professores"
+                  value={newApiName}
+                  onChange={(e) => setNewApiName(e.target.value)}
+                  className="w-full border border-border-subtle rounded-lg p-2.5 text-xs focus:border-secondary focus:outline-none"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button type="button" onClick={() => setApiModal(false)} className="border border-border-subtle px-4 py-2 rounded-xl font-semibold cursor-pointer hover:bg-surface-container transition-all">
+                  Cancelar
+                </button>
+                <button type="submit" className="bg-secondary text-surface-white px-5 py-2 rounded-xl font-bold cursor-pointer hover:bg-secondary/90 transition-all">
+                  Gerar Key
+                </button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* Modal: Confirmar Revogação API Key */}
+      {/* Modal: Confirmar Remoção de API Key */}
       {confirmDeleteApi && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-surface-white rounded-xl shadow-2xl border border-border-subtle w-full max-w-md p-6 my-8">
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 overflow-y-auto backdrop-blur-xs">
+          <div className="bg-surface-white rounded-2xl shadow-2xl border border-border-subtle w-full max-w-md p-6 my-8">
             <div className="flex justify-between items-center border-b border-border-subtle pb-3 mb-4">
-              <h2 className="text-lg font-bold text-primary flex items-center gap-2"><AlertTriangle className="w-5 h-5 text-warning" />Revogar API Key</h2>
-              <button onClick={() => setConfirmDeleteApi(null)} className="text-outline hover:text-primary p-1 rounded hover:bg-surface-container cursor-pointer"><X className="w-4 h-4" /></button>
+              <h2 className="text-base font-bold text-primary flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-warning" /> Revogar API Key
+              </h2>
+              <button onClick={() => setConfirmDeleteApi(null)} className="text-outline hover:text-primary p-1 rounded-lg hover:bg-surface-container cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <p className="text-xs text-on-surface-variant mb-4">Esta ação é irreversível. Deseja revogar a chave <strong className="text-primary">{confirmDeleteApi.nome}</strong>? Todos os serviços que a utilizam perderão o acesso.</p>
+            <p className="text-xs text-on-surface-variant mb-4">
+              Esta ação é irreversível. Deseja revogar a chave <strong className="text-primary">{confirmDeleteApi.nome}</strong>?
+            </p>
             <div className="flex justify-end gap-2">
-              <button onClick={() => setConfirmDeleteApi(null)} className="border border-border-subtle px-4 py-2 rounded-lg font-semibold cursor-pointer hover:bg-surface-container transition-all">Cancelar</button>
-              <button onClick={removeApiKey} className="bg-error text-surface-white px-4 py-2 rounded-lg font-bold cursor-pointer hover:bg-error/90 transition-all">Sim, Revogar</button>
+              <button onClick={() => setConfirmDeleteApi(null)} className="border border-border-subtle px-4 py-2 rounded-xl font-semibold cursor-pointer hover:bg-surface-container transition-all">
+                Cancelar
+              </button>
+              <button onClick={removeApiKey} className="bg-error text-surface-white px-5 py-2 rounded-xl font-bold cursor-pointer hover:bg-error/90 transition-all">
+                Sim, Revogar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Restauro de Backup */}
+      {restoreBackup && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 overflow-y-auto backdrop-blur-xs">
+          <div className="bg-surface-white rounded-2xl shadow-2xl border border-border-subtle w-full max-w-md p-6 my-8">
+            <div className="flex justify-between items-center border-b border-border-subtle pb-3 mb-4">
+              <h2 className="text-base font-bold text-primary flex items-center gap-2">
+                <RefreshCw className="w-5 h-5 text-info" /> Confirmar Restauro de Backup
+              </h2>
+              <button onClick={() => setRestoreBackup(null)} className="text-outline hover:text-primary p-1 rounded-lg hover:bg-surface-container cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-xs text-on-surface-variant mb-4">
+              Deseja restaurar a base de dados a partir do ponto de restauração <strong className="text-primary">{restoreBackup.nome}</strong> ({restoreBackup.data})?
+            </p>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setRestoreBackup(null)} className="border border-border-subtle px-4 py-2 rounded-xl font-semibold cursor-pointer hover:bg-surface-container transition-all">
+                Cancelar
+              </button>
+              <button onClick={doRestore} className="bg-info text-surface-white px-5 py-2 rounded-xl font-bold cursor-pointer hover:bg-info/90 transition-all">
+                Restaurar
+              </button>
             </div>
           </div>
         </div>
@@ -564,33 +950,26 @@ export const ConfigInstituicaoView: React.FC<Props> = ({ onShowToast }) => {
 
       {/* Modal: Confirmar Remoção de Backup */}
       {confirmDeleteBackup && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-surface-white rounded-xl shadow-2xl border border-border-subtle w-full max-w-md p-6 my-8">
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 overflow-y-auto backdrop-blur-xs">
+          <div className="bg-surface-white rounded-2xl shadow-2xl border border-border-subtle w-full max-w-md p-6 my-8">
             <div className="flex justify-between items-center border-b border-border-subtle pb-3 mb-4">
-              <h2 className="text-lg font-bold text-primary flex items-center gap-2"><AlertTriangle className="w-5 h-5 text-warning" />Remover Backup</h2>
-              <button onClick={() => setConfirmDeleteBackup(null)} className="text-outline hover:text-primary p-1 rounded hover:bg-surface-container cursor-pointer"><X className="w-4 h-4" /></button>
+              <h2 className="text-base font-bold text-primary flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-warning" /> Remover Backup
+              </h2>
+              <button onClick={() => setConfirmDeleteBackup(null)} className="text-outline hover:text-primary p-1 rounded-lg hover:bg-surface-container cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <p className="text-xs text-on-surface-variant mb-4">Deseja remover o backup <strong className="text-primary">{confirmDeleteBackup.nome}</strong>?</p>
+            <p className="text-xs text-on-surface-variant mb-4">
+              Deseja remover o ficheiro de backup <strong className="text-primary">{confirmDeleteBackup.nome}</strong>?
+            </p>
             <div className="flex justify-end gap-2">
-              <button onClick={() => setConfirmDeleteBackup(null)} className="border border-border-subtle px-4 py-2 rounded-lg font-semibold cursor-pointer hover:bg-surface-container transition-all">Cancelar</button>
-              <button onClick={removeBackup} className="bg-error text-surface-white px-4 py-2 rounded-lg font-bold cursor-pointer hover:bg-error/90 transition-all">Sim, Remover</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal: Confirmar Restauro de Backup */}
-      {restoreBackup && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-surface-white rounded-xl shadow-2xl border border-border-subtle w-full max-w-md p-6 my-8">
-            <div className="flex justify-between items-center border-b border-border-subtle pb-3 mb-4">
-              <h2 className="text-lg font-bold text-primary flex items-center gap-2"><RefreshCw className="w-5 h-5 text-warning" />Restaurar Backup</h2>
-              <button onClick={() => setRestoreBackup(null)} className="text-outline hover:text-primary p-1 rounded hover:bg-surface-container cursor-pointer"><X className="w-4 h-4" /></button>
-            </div>
-            <p className="text-xs text-on-surface-variant mb-4">O sistema será restaurado para o estado de <strong className="text-primary">{restoreBackup.data}</strong>. Todos os dados criados após esta data serão perdidos. Continuar?</p>
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setRestoreBackup(null)} className="border border-border-subtle px-4 py-2 rounded-lg font-semibold cursor-pointer hover:bg-surface-container transition-all">Cancelar</button>
-              <button onClick={doRestore} className="bg-secondary text-surface-white px-4 py-2 rounded-lg font-bold cursor-pointer hover:bg-secondary/90 transition-all">Sim, Restaurar</button>
+              <button onClick={() => setConfirmDeleteBackup(null)} className="border border-border-subtle px-4 py-2 rounded-xl font-semibold cursor-pointer hover:bg-surface-container transition-all">
+                Cancelar
+              </button>
+              <button onClick={removeBackup} className="bg-error text-surface-white px-4 py-2 rounded-xl font-bold cursor-pointer hover:bg-error/90 transition-all">
+                Remover
+              </button>
             </div>
           </div>
         </div>

@@ -140,18 +140,19 @@
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
+  font-variation-settings: 'wght' 200, 'opsz' 20;
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 }
 
-.sidebar-expanded { width: 260px; }
-.sidebar-collapsed { width: 80px; }
+.sidebar-expanded { width: 230px; }
+.sidebar-collapsed { width: 72px; }
 
-body.sidebar-expanded-body .main-content { margin-left: 260px; width: calc(100% - 260px); }
-body.sidebar-collapsed-body .main-content { margin-left: 80px; width: calc(100% - 80px); }
+body.sidebar-expanded-body .main-content { margin-left: 230px; width: calc(100% - 230px); }
+body.sidebar-collapsed-body .main-content { margin-left: 72px; width: calc(100% - 72px); }
 
-body.sidebar-expanded-body .header-nav { width: calc(100% - 260px); }
-body.sidebar-collapsed-body .header-nav { width: calc(100% - 80px); }
+body.sidebar-expanded-body .header-nav { width: calc(100% - 230px); }
+body.sidebar-collapsed-body .header-nav { width: calc(100% - 72px); }
 
 .has-tooltip {
   position: relative;
@@ -257,15 +258,20 @@ tr {
 /* Internal elements (status badges/pills like ativo/inativo, regularizada/pendente, filter chips, tags, buttons, inputs) get 4px border radius */
 span[class*="rounded"],
 span[class*="bg-"],
-[class*="rounded-full"],
 [class*="rounded-md"],
 [class*="rounded-sm"],
-button[class*="rounded"],
+button[class*="rounded"]:not(.rounded-full),
 input[class*="rounded"],
 select[class*="rounded"],
 .badge,
 .status-pill {
   border-radius: 4px !important;
+}
+
+/* Perfect Circles Exception */
+.rounded-full,
+[class*="rounded-full"] {
+  border-radius: 9999px !important;
 }
 
 /* Ensure icon container elements specifically configured as transparent don't inherit card fill */

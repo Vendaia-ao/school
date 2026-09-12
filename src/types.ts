@@ -28,8 +28,37 @@ export type ActiveView =
   | 'cms'
   // Módulo 9 — Administração da Plataforma
   | 'utilizadores_permissoes'
+  | 'estruturas'
   | 'config_instituicao'
   | 'administracao'; // legacy fallback
+
+export type StructureType = 'college' | 'campus' | 'faculty' | 'polo' | 'center' | 'unit';
+
+export interface Structure {
+  id: string;
+  institutionId: string;
+  codigo: string;
+  nome: string;
+  tipo: StructureType;
+  tipoLabel: string;
+  morada: string;
+  diretorResponsavel: string;
+  estudantesCount: number;
+  professoresCount: number;
+  estado: 'Ativo' | 'Inativo';
+  criadoEm: string;
+}
+
+export interface UserStructureAccess {
+  id: string;
+  userId: string;
+  institutionId: string;
+  structureId?: string; // undefined / null = Acesso Consolidado Global a Todas as Estruturas
+  groupId?: string;
+  groupNome?: string;
+  isPrimary: boolean;
+}
+
 
 export type EnrollmentStatus = 'Ativo' | 'Inativo' | 'Pendente';
 export type FinancialStatus = 'Regularizada' | 'Pendente' | 'Dívida';
